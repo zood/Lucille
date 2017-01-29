@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Track location</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <link href='./css/mapbox.3.0.1.css' rel='stylesheet' />
+    <style>
+    body { margin:0; padding:0; }
+    #map { position:absolute; top:0; bottom:0; width:100%; }
+    </style>
+</head>
+
+<body>
+    <p>Hello, world</p>
+    <p>Secret Key: <span id="secret_key"></span></p>
+    <p>Box Id: <span id="box_id"></span></p>
+    <p>User id: <span id="user_id"></span></p>
+    <p>Username: <span id="username"></span></p>
+    <div id="map"></div>
+    <script src="./libs/sodium.0.4.2.js"></script>
+    <script src='./libs/mapbox.3.0.1.js'></script>
+    <script src="googlemaps.js"></script>
+    <script src="pubsub.js"></script>
+    <script src="oscar.js"></script>
+    <script src="lucille.js"></script>
+</body>
+
+</html>

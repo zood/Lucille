@@ -101,7 +101,7 @@ namespace oscar {
                 req.addEventListener("load", function () {
                     if (req.status == 200) {
                         let pkMsg = JSON.parse(req.response as string) as PublicKeyResponse;
-                        let buf = sodium.from_base64(pkMsg.public_key);
+                        let buf = sodium.from_base64(pkMsg.public_key, sodium.base64_variants.ORIGINAL);
                         resolve(buf);
                     } else {
                         reject(new Error("invalid status code: " + req.status));

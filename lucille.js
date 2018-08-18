@@ -11,6 +11,9 @@ class PageState {
 }
 const gPageState = new PageState();
 let connectedPackageWatcher = null;
+// interface SodiumWindow extends Window {
+//     sodium: s
+// }
 function extractDataFromFragment() {
     if (!window.document.location.hash) {
         return false;
@@ -74,8 +77,8 @@ async function onPackageReceived(pkg) {
     let msgStr = String.fromCharCode.apply(this, pkg.msg);
     let msgObj = JSON.parse(msgStr);
     let encData = {
-        cipher_text: sodium.from_base64(msgObj.cipher_text),
-        nonce: sodium.from_base64(msgObj.nonce)
+        cipher_text: sodium.from_base64(msgObj.cipher_text, sodium.base64_variants.ORIGINAL),
+        nonce: sodium.from_base64(msgObj.nonce, sodium.base64_variants.ORIGINAL)
     };
     let unencData = sodium.crypto_box_open_easy(encData.cipher_text, encData.nonce, gPageState.senderPublicKey, gPageState.secretKey);
     let locInfoStr = String.fromCharCode.apply(this, unencData);
@@ -110,8 +113,11 @@ async function onPackageReceived(pkg) {
     else {
         gPageState.marker.setOptions({ position: pos });
     }
+    /*
+    */
 }
 async function run() {
+    console.log("run");
     if (!extractDataFromFragment()) {
         return;
     }
@@ -134,7 +140,7 @@ async function run() {
     try {
         let client = new oscar.Client(gRESTAddress);
         gPageState.senderPublicKey = await client.retrievePublicKey(gPageState.userId);
-        console.log("got spk:", gPageState.senderPublicKey);
+        // console.log("got spk:", gPageState.senderPublicKey);
     }
     catch (err) {
         console.log("error retrieving public key: ", err);
@@ -151,4 +157,4 @@ async function run() {
     pubsub.Sub(oscar.PackageDropEventName, onPackageReceived);
     connectedPackageWatcher.watch(gPageState.receivingBoxId);
 }
-run();
+// run();

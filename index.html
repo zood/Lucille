@@ -8,7 +8,6 @@
     <title>Track location</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <link href="./css/styles.css" rel="stylesheet" />
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkOAY7DArXbNdTFSvW8fehphYUIDFM0yw&callback=initMap">
     </script>
 </head>
 
@@ -19,11 +18,21 @@
     <p>User id: <span id="user_id"></span></p>
     <p>Username: <span id="username"></span></p>
     <div id="map"></div>
-    <script src="./libs/sodium.0.4.2.js"></script>
-    <script src="googlemaps.js"></script>
-    <script src="pubsub.js"></script>
-    <script src="oscar.js"></script>
-    <script src="lucille.js"></script>
+    <script>
+        console.log("window.sodium setup");
+        window.sodium = {
+            onload: function () {
+                console.log("sodium initialized");
+                run();
+            }
+        };
+    </script>
+    <script async src="./libs/sodium.0.7.3.js"></script>
+    <!-- <script async src="googlemaps.js"></script> -->
+    <script async src="pubsub.js"></script>
+    <script async src="oscar.js"></script>
+    <script async src="lucille.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkOAY7DArXbNdTFSvW8fehphYUIDFM0yw&callback=initMap"></script>
 </body>
 
 </html>

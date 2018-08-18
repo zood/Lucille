@@ -5,14 +5,14 @@ var pubsub;
         if (!registry[name]) {
             return;
         }
-        var subs = registry[name];
-        subs.forEach(function (sub) {
+        let subs = registry[name];
+        subs.forEach(sub => {
             sub(obj);
         });
     }
     pubsub.Pub = Pub;
     function Sub(name, sub) {
-        var subs = registry[name];
+        let subs = registry[name];
         if (!subs) {
             registry[name] = [sub];
         }

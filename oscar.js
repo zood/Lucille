@@ -6,10 +6,10 @@ var oscar;
     oscar.PackageDropEventName = "oscar.package-drop-event";
     function onPackageWatcherMessage(pw, evt) {
         // console.log("PackageWatcher.onMessage", evt.data);
-        var binMsg = new Uint8Array(evt.data);
+        let binMsg = new Uint8Array(evt.data);
         // quick sanity check
         // message is command (1 byte) + box id + msg (at least 2 bytes)
-        var minLength = 1 + oscar.DROP_BOX_ID_LENGTH + 1;
+        let minLength = 1 + oscar.DROP_BOX_ID_LENGTH + 1;
         if (binMsg.length <= minLength) {
             console.log("PackageWatcher.onMessage received an invalid message from the server. length was only ", binMsg.length);
             return;
@@ -19,16 +19,16 @@ var oscar;
             console.log("PackageWatcher received incorrect opening byte:", binMsg[0]);
             return;
         }
-        var boxId = new Uint8Array(new ArrayBuffer(oscar.DROP_BOX_ID_LENGTH));
-        for (var i = 0; i < oscar.DROP_BOX_ID_LENGTH; i++) {
+        let boxId = new Uint8Array(new ArrayBuffer(oscar.DROP_BOX_ID_LENGTH));
+        for (let i = 0; i < oscar.DROP_BOX_ID_LENGTH; i++) {
             boxId[i] = binMsg[i + 1];
         }
-        var msg = new Uint8Array(new ArrayBuffer(binMsg.length - 1 - oscar.DROP_BOX_ID_LENGTH));
-        var offset = 1 + oscar.DROP_BOX_ID_LENGTH;
-        for (var i = offset; i < binMsg.length; i++) {
+        let msg = new Uint8Array(new ArrayBuffer(binMsg.length - 1 - oscar.DROP_BOX_ID_LENGTH));
+        let offset = 1 + oscar.DROP_BOX_ID_LENGTH;
+        for (let i = offset; i < binMsg.length; i++) {
             msg[i - offset] = binMsg[i];
         }
-        var pkg = { boxId: boxId, msg: msg };
+        let pkg = { boxId: boxId, msg: msg };
         pubsub.Pub(oscar.PackageDropEventName, pkg);
     }
     function onPackageWatcherError(pw, evt) {
@@ -37,23 +37,20 @@ var oscar;
     function onPackageWatcherClose(pw, evt) {
         console.log("PackageWatcher.onClose", evt);
     }
-    var PackageWatcher = (function () {
-        function PackageWatcher() {
-        }
-        PackageWatcher.prototype.watch = function (boxId) {
-            var buf = new Uint8Array(new ArrayBuffer(boxId.length + 1));
+    class PackageWatcher {
+        watch(boxId) {
+            let buf = new Uint8Array(new ArrayBuffer(boxId.length + 1));
             buf[0] = 1;
-            for (var i = 1; i <= boxId.length; i++) {
+            for (let i = 1; i <= boxId.length; i++) {
                 buf[i] = boxId[i - 1];
             }
             this.socket.send(buf);
-        };
-        return PackageWatcher;
-    }());
+        }
+    }
     oscar.PackageWatcher = PackageWatcher;
     function createPackageWatcher(address) {
-        return new Promise(function (resolve, reject) {
-            var pw = new PackageWatcher();
+        return new Promise((resolve, reject) => {
+            let pw = new PackageWatcher();
             pw.socket = new WebSocket(address + "/alpha/drop-boxes/watch");
             pw.socket.binaryType = "arraybuffer";
             pw.socket.onopen = function (evt) {
@@ -74,18 +71,17 @@ var oscar;
         });
     }
     oscar.createPackageWatcher = createPackageWatcher;
-    var Client = (function () {
-        function Client(addr) {
+    class Client {
+        constructor(addr) {
             this.address = addr;
         }
-        Client.prototype.retrievePublicKey = function (userId) {
-            var _this = this;
-            return new Promise(function (resolve, reject) {
+        retrievePublicKey(userId) {
+            return new Promise((resolve, reject) => {
                 var req = new XMLHttpRequest();
                 req.addEventListener("load", function () {
                     if (req.status == 200) {
-                        var pkMsg = JSON.parse(req.response);
-                        var buf = sodium.from_base64(pkMsg.public_key);
+                        let pkMsg = JSON.parse(req.response);
+                        let buf = sodium.from_base64(pkMsg.public_key);
                         resolve(buf);
                     }
                     else {
@@ -96,11 +92,10 @@ var oscar;
                     console.log("error loading public key: ", err);
                     reject(err);
                 });
-                req.open("GET", _this.address + "/alpha/users/" + sodium.to_hex(userId) + "/public-key");
+                req.open("GET", this.address + "/alpha/users/" + sodium.to_hex(userId) + "/public-key");
                 req.send();
             });
-        };
-        return Client;
-    }());
+        }
+    }
     oscar.Client = Client;
 })(oscar || (oscar = {}));

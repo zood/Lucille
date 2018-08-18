@@ -1,15 +1,15 @@
 var gmaps;
 (function (gmaps) {
-    var apiRoot = "https://maps.googleapis.com/maps/api/";
+    const apiRoot = "https://maps.googleapis.com/maps/api/";
     function getLocalityAddress(rg) {
         if (rg.status == null || rg.status != "OK") {
             return null;
         }
-        for (var i = 0; i < rg.results.length; i++) {
-            var r = rg.results[i];
+        for (let i = 0; i < rg.results.length; i++) {
+            let r = rg.results[i];
             // check the types for 'locality', then 'political' as the fallback
-            for (var j = 0; j < r.types.length; j++) {
-                var t = r.types[j];
+            for (let j = 0; j < r.types.length; j++) {
+                let t = r.types[j];
                 if (t == "locality" || t == "political") {
                     return r.formatted_address;
                 }
@@ -19,12 +19,12 @@ var gmaps;
     }
     gmaps.getLocalityAddress = getLocalityAddress;
     function getReverseGeocoding(lat, lng, lang) {
-        return new Promise(function (resolve, reject) {
-            var latlng = lat + "," + lng;
-            var req = new XMLHttpRequest();
+        return new Promise((resolve, reject) => {
+            let latlng = lat + "," + lng;
+            let req = new XMLHttpRequest();
             req.addEventListener("load", function () {
                 if (req.status == 200) {
-                    var obj = JSON.parse(req.response);
+                    let obj = JSON.parse(req.response);
                     resolve(obj);
                 }
                 else {

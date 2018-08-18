@@ -10,10 +10,14 @@ class PageState {
     userId: Uint8Array;
     senderPublicKey: Uint8Array;
 
-    map: L.Map;
-    marker: L.Marker | null;
+    lastLocation: LocationInfo | null;
+
+    map: google.maps.Map | null;
+    marker: google.maps.Marker | null;
 
     constructor() {
+        this.lastLocation = null;
+        this.map = null;
         this.marker = null;
     }
 }
@@ -40,7 +44,6 @@ interface LocationInfo {
 
 function extractDataFromFragment(): boolean {
     if (!window.document.location.hash) {
-        console.log("where the heck is the fragment?");
         return false;
     }
     let fragment = window.document.location.hash.substring(1);
@@ -78,26 +81,22 @@ function extractDataFromFragment(): boolean {
     return true;
 }
 
-async function onMarkerClicked(evt: MouseEvent) {
-    console.log("marker was clicked", evt);
-    if (gPageState.marker == null) {
-        console.log("marker is null");
-        return;
+// Gets called by the GMaps SDK once it's done loading
+function initMap() {
+    let lat = 0;
+    let lng = 0;
+    let zoom = 2;
+    // if we already have a location, center us there
+    if (gPageState.lastLocation != null) {
+        console.log("We already have the initial location");
+        lat = gPageState.lastLocation.latitude;
+        lng = gPageState.lastLocation.longitude;
+        zoom = 15;
     }
-
-    let content = document.createElement("p");
-    content.innerText = "Loading...";
-    gPageState.marker.setPopupContent(content);
-    gPageState.marker.openPopup();
-
-    let latLng = gPageState.marker.getLatLng()
-    let rg = await gmaps.getReverseGeocoding(latLng.lat, latLng.lat, window.navigator.language);
-    let place = gmaps.getLocalityAddress(rg);
-    if (place == null) {
-        content.innerText = latLng.lat + ", " + latLng.lng;
-    } else {
-        content.innerText = place;
-    }
+    gPageState.map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: lat, lng: lng },
+        zoom: zoom
+    });
 }
 
 async function onPackageReceived(pkg: oscar.Package) {
@@ -127,29 +126,31 @@ async function onPackageReceived(pkg: oscar.Package) {
         return;
     }
     console.log(locInfoStr);
+    gPageState.lastLocation = locInfo;
 
-    let latlng = L.latLng(locInfo.latitude, locInfo.longitude);
+    // Make sure the map has loaded first
+    if (gPageState.map == null) {
+        return;
+    }
+
+    let pos = { lat: locInfo.latitude, lng: locInfo.longitude };
     // if we already have a marker for the user, update it. otherwise, build one.
     if (gPageState.marker == null) {
-        gPageState.marker = L.marker(latlng, { title: gPageState.username }).
-            addTo(gPageState.map).
-            on("click", onMarkerClicked, null);
+        gPageState.marker = new google.maps.Marker({
+            position: pos, map: gPageState.map,
+            title: gPageState.username
+        });
+        let mapOpts = {
+            zoom: 15,
+            center: pos
+        };
+        gPageState.map.setOptions(mapOpts);
     } else {
-        gPageState.marker.setLatLng(latlng);
+        gPageState.marker.setOptions({ position: pos });
     }
-    gPageState.map.setView(latlng, 15, { animate: true });
-
-    // let rg = await gmaps.getReverseGeocoding(locInfo.latitude, locInfo.longitude, window.navigator.language);
-    // let place = gmaps.getLocalityAddress(rg);
-    // console.log(place);
-    // console.log("popup", gPageState.marker.getPopup());
 }
 
 async function run() {
-    L.mapbox.accessToken = 'pk.eyJ1IjoiYXJhc2hwYXlhbiIsImEiOiJFNWpWRTBZIn0.Ha2rFR0qeRdAnW9NyTZ9NA';
-    // bring up the display ASAP
-    gPageState.map = L.mapbox.map("map", "mapbox.streets");
-
     if (!extractDataFromFragment()) {
         return;
     }

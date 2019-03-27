@@ -1,7 +1,5 @@
-// const gRESTAddress = "http://127.0.0.1:9999"
-// const gRPCAddress = "ws://127.0.0.1:9999"
-const gRESTAddress = "https://api.pijun.io";
-const gRPCAddress = "wss://api.pijun.io";
+const gRESTAddress = "https://api.zood.xyz";
+const gRPCAddress = "wss://api.zood.xyz";
 class PageState {
     constructor() {
         this.lastLocation = null;

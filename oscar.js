@@ -51,7 +51,7 @@ var oscar;
     function createPackageWatcher(address) {
         return new Promise((resolve, reject) => {
             let pw = new PackageWatcher();
-            pw.socket = new WebSocket(address + "/alpha/drop-boxes/watch");
+            pw.socket = new WebSocket(address + "/1/drop-boxes/watch");
             pw.socket.binaryType = "arraybuffer";
             pw.socket.onopen = function (evt) {
                 pw.socket.onerror = function (evt) {
@@ -92,7 +92,7 @@ var oscar;
                     console.log("error loading public key: ", err);
                     reject(err);
                 });
-                req.open("GET", this.address + "/alpha/users/" + sodium.to_hex(userId) + "/public-key");
+                req.open("GET", this.address + "/1/users/" + sodium.to_hex(userId) + "/public-key");
                 req.send();
             });
         }

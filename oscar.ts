@@ -68,7 +68,7 @@ namespace oscar {
     export function createPackageWatcher(address: string): Promise<PackageWatcher> {
         return new Promise<PackageWatcher>((resolve, reject) => {
             let pw = new PackageWatcher();
-            pw.socket = new WebSocket(address + "/alpha/drop-boxes/watch");
+            pw.socket = new WebSocket(address + "/1/drop-boxes/watch");
             pw.socket.binaryType = "arraybuffer";
             pw.socket.onopen = function (evt: Event) {
                 pw.socket.onerror = function (this: WebSocket, evt: ErrorEvent) {
@@ -111,7 +111,7 @@ namespace oscar {
                     console.log("error loading public key: ", err);
                     reject(err);
                 });
-                req.open("GET", this.address + "/alpha/users/" + sodium.to_hex(userId) + "/public-key");
+                req.open("GET", this.address + "/1/users/" + sodium.to_hex(userId) + "/public-key");
                 req.send();
             });
         }

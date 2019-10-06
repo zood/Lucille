@@ -1,17 +1,11 @@
-const gRESTAddress = "https://api.zood.xyz";
-const gRPCAddress = "wss://api.zood.xyz";
-class PageState {
+class Application {
     constructor() {
         this.lastLocation = null;
         this.map = null;
         this.marker = null;
     }
 }
-const gPageState = new PageState();
-let connectedPackageWatcher = null;
-// interface SodiumWindow extends Window {
-//     sodium: s
-// }
+const app = new Application();
 function extractDataFromFragment() {
     if (!window.document.location.hash) {
         return false;
@@ -25,22 +19,22 @@ function extractDataFromFragment() {
         }
         switch (parts[0]) {
             case "u":
-                gPageState.username = parts[1];
+                app.username = parts[1];
                 break;
             case "k":
-                gPageState.secretKey = sodium.from_hex(parts[1]);
+                app.secretKey = sodium.from_hex(parts[1]);
                 break;
             case "b":
-                gPageState.receivingBoxId = sodium.from_hex(parts[1]);
-                if (gPageState.receivingBoxId.length != oscar.DROP_BOX_ID_LENGTH) {
-                    console.log("ERROR: box id in fragment is the incorrect length", gPageState.receivingBoxId.length);
+                app.receivingBoxId = sodium.from_hex(parts[1]);
+                if (app.receivingBoxId.length != zood.DROP_BOX_ID_LENGTH) {
+                    console.log("ERROR: box id in fragment is the incorrect length", app.receivingBoxId.length);
                     return false;
                 }
                 break;
             case "i":
-                gPageState.userId = sodium.from_hex(parts[1]);
-                if (gPageState.userId.length != oscar.USER_ID_LENGTH) {
-                    console.log("ERROR: user id in fragment is the incorrect length", gPageState.userId.length);
+                app.userId = sodium.from_hex(parts[1]);
+                if (app.userId.length != zood.USER_ID_LENGTH) {
+                    console.log("ERROR: user id in fragment is the incorrect length", app.userId.length);
                     return false;
                 }
                 break;
@@ -54,13 +48,13 @@ function initMap() {
     let lng = 0;
     let zoom = 2;
     // if we already have a location, center us there
-    if (gPageState.lastLocation != null) {
+    if (app.lastLocation != null) {
         console.log("We already have the initial location");
-        lat = gPageState.lastLocation.latitude;
-        lng = gPageState.lastLocation.longitude;
+        lat = app.lastLocation.latitude;
+        lng = app.lastLocation.longitude;
         zoom = 15;
     }
-    gPageState.map = new google.maps.Map(document.getElementById("map"), {
+    app.map = new google.maps.Map(document.getElementById("map"), {
         center: { lat: lat, lng: lng },
         zoom: zoom
     });
@@ -68,17 +62,17 @@ function initMap() {
 async function onPackageReceived(pkg) {
     // console.log("onPackageReceived:", pkg);
     // make sure this is the box we're interested in
-    if (!sodium.memcmp(pkg.boxId, gPageState.receivingBoxId)) {
+    if (!sodium.memcmp(pkg.boxId, app.receivingBoxId)) {
         console.log("Received a package from a drop box for which we're not interested", sodium.to_hex(pkg.boxId));
         return;
     }
-    let msgStr = String.fromCharCode.apply(this, pkg.msg);
+    let msgStr = String.fromCharCode.apply(this, pkg.bytes);
     let msgObj = JSON.parse(msgStr);
     let encData = {
-        cipher_text: sodium.from_base64(msgObj.cipher_text, sodium.base64_variants.ORIGINAL),
-        nonce: sodium.from_base64(msgObj.nonce, sodium.base64_variants.ORIGINAL)
+        cipher_text: sodium.from_base64(msgObj.cipher_text, 1 /* ORIGINAL */),
+        nonce: sodium.from_base64(msgObj.nonce, 1 /* ORIGINAL */)
     };
-    let unencData = sodium.crypto_box_open_easy(encData.cipher_text, encData.nonce, gPageState.senderPublicKey, gPageState.secretKey);
+    let unencData = sodium.crypto_box_open_easy(encData.cipher_text, encData.nonce, app.senderPublicKey, app.secretKey);
     let locInfoStr = String.fromCharCode.apply(this, unencData);
     let locInfo = JSON.parse(locInfoStr);
     if (!locInfo.type) {
@@ -90,29 +84,27 @@ async function onPackageReceived(pkg) {
         return;
     }
     console.log(locInfoStr);
-    gPageState.lastLocation = locInfo;
+    app.lastLocation = locInfo;
     // Make sure the map has loaded first
-    if (gPageState.map == null) {
+    if (app.map == null) {
         return;
     }
     let pos = { lat: locInfo.latitude, lng: locInfo.longitude };
     // if we already have a marker for the user, update it. otherwise, build one.
-    if (gPageState.marker == null) {
-        gPageState.marker = new google.maps.Marker({
-            position: pos, map: gPageState.map,
-            title: gPageState.username
+    if (app.marker == null) {
+        app.marker = new google.maps.Marker({
+            position: pos, map: app.map,
+            title: app.username
         });
         let mapOpts = {
             zoom: 15,
             center: pos
         };
-        gPageState.map.setOptions(mapOpts);
+        app.map.setOptions(mapOpts);
     }
     else {
-        gPageState.marker.setOptions({ position: pos });
+        app.marker.setOptions({ position: pos });
     }
-    /*
-    */
 }
 async function run() {
     console.log("run");
@@ -121,23 +113,24 @@ async function run() {
     }
     let secretKeyElement = document.getElementById("secret_key");
     if (secretKeyElement) {
-        secretKeyElement.innerText = sodium.to_hex(gPageState.secretKey);
+        secretKeyElement.innerText = sodium.to_hex(app.secretKey);
     }
     let usernameElement = document.getElementById("username");
     if (usernameElement) {
-        usernameElement.innerText = gPageState.username;
+        usernameElement.innerText = app.username;
     }
     let boxIdElement = document.getElementById("box_id");
     if (boxIdElement) {
-        boxIdElement.innerText = sodium.to_hex(gPageState.receivingBoxId);
+        boxIdElement.innerText = sodium.to_hex(app.receivingBoxId);
     }
     let userIdElement = document.getElementById("user_id");
     if (userIdElement) {
-        userIdElement.innerText = sodium.to_hex(gPageState.userId);
+        userIdElement.innerText = sodium.to_hex(app.userId);
     }
     try {
-        let client = new oscar.Client(gRESTAddress);
-        gPageState.senderPublicKey = await client.retrievePublicKey(gPageState.userId);
+        let client = new zood.Client(null);
+        let pkr = await client.getUserPublicKey(app.userId);
+        app.senderPublicKey = pkr.public_key;
         // console.log("got spk:", gPageState.senderPublicKey);
     }
     catch (err) {
@@ -145,14 +138,14 @@ async function run() {
         return;
     }
     try {
-        connectedPackageWatcher = await oscar.createPackageWatcher(gRPCAddress);
-        console.log("got package watcher");
+        let socket = new zood.DropBoxWatcher();
+        socket.onPackageReceived = onPackageReceived;
+        await socket.connect("wss://api.zood.xyz" /* production */);
+        console.log("drop box watcher is connected");
+        socket.watch(app.receivingBoxId);
     }
     catch (err) {
-        console.log("error creating package watcher", err);
+        console.log("error connecting drop box watcher", err);
         return;
     }
-    pubsub.Sub(oscar.PackageDropEventName, onPackageReceived);
-    connectedPackageWatcher.watch(gPageState.receivingBoxId);
 }
-// run();

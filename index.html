@@ -1,36 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>Track location</title>
-    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <link href="./css/styles.css" rel="stylesheet" />
-</head>
+        <title>Track location</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"/>
+        <link href="./css/styles.css" rel="stylesheet"/>
+    </head>
 
-<body>
-    <p>Hello, world</p>
-    <p>Secret Key: <span id="secret_key"></span></p>
-    <p>Box Id: <span id="box_id"></span></p>
-    <p>User id: <span id="user_id"></span></p>
-    <p>Username: <span id="username"></span></p>
-    <div id="map"></div>
-    <script>
-        console.log("window.sodium setup");
-        window.sodium = {
-            onload: function () {
-                console.log("sodium initialized");
-                run();
-            }
-        };
-    </script>
-    <script async src="./libs/sodium.0.7.4.js"></script>
-    <script async src="js/zood.js"></script>
-    <script async src="js/lucille.js"></script>
-    <script async defer
+    <body>
+        <main>
+            <div class="wrapper">
+                <header>
+                    <a href="https://zood.xyz"><img alt="zood" src="images/zood-logo.svg" width="73"></a>
+                </header>
+                <div id="map"></div>
+
+            </div>
+        </main>
+        <footer>
+            <div class="address-box">
+                <div class="heading">
+                    <img class="battery" src="images/battery.svg">
+                    <h2>
+                       alita     
+                    </h2>
+                    <img class="transportation-mode" src="images/bike.svg">
+                    <span> • 2 min ago</span>
+
+                </div>
+
+                <p>2041 Trentham Rd, Thousand Oaks</p>
+            </div>
+            <h1>Connect with alita in Zood</h1>
+            <p class="desc">By using Zood Location the device alita is using safely shares its location. The application is free and enables you to keep track of your family and friends in a secure and easy way.</p>
+
+            <h2>Download     <img src="images/location_icon.svg" class="inline-svg">    Zood Location and safely share your location.</h2>
+            <img class="download-btn" src="images/gplay-badge.svg">
+        </footer>
+        <script>
+            console.log("window.sodium setup");
+            window.sodium = {
+                onload: function () {
+                    console.log("sodium initialized");
+                    run();
+                }
+            };
+        </script>
+        <script async src="./libs/sodium.0.7.4.js"></script>
+        <script async src="js/zood.js"></script>
+        <script async src="js/lucille.js"></script>
+        <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkOAY7DArXbNdTFSvW8fehphYUIDFM0yw&callback=initMap"></script>
-</body>
+    </body>
 
 </html>

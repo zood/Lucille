@@ -14,7 +14,10 @@
         <main>
             <div class="wrapper">
                 <header>
-                    <a href="https://zood.xyz"><img alt="zood" src="images/zood-logo.svg" width="73"></a>
+                    <div>
+                        <a href="https://zood.xyz"><img class="logo" alt="zood" src="images/zood-logo.svg" width="73"></a>
+                        <p class="logo-tagline">The privacy company</p>
+                    </div>
                 </header>
                 <div id="map"></div>
 
@@ -23,22 +26,42 @@
         <footer>
             <div class="address-box">
                 <div class="heading">
-                    <img class="battery" src="images/battery.svg">
+
                     <h2>
-                       alita     
+                       alita     <span class="compass"><img src="images/navigation.svg"></span>
                     </h2>
-                    <img class="transportation-mode" src="images/bike.svg">
-                    <span> • 2 min ago</span>
 
                 </div>
-
+                <div class="subheading">
+                    <span class="battery battery-20"></span>
+                    <div class="battery-power">50%</div>
+                    <img class="transportation-mode" src="images/bike.svg">
+                    <div class="time"> • &nbsp; 2 min ago</div>
+                </div>
                 <p>2041 Trentham Rd, Thousand Oaks</p>
             </div>
-            <h1>Connect with alita in Zood</h1>
-            <p class="desc">By using Zood Location the device alita is using safely shares its location. The application is free and enables you to keep track of your family and friends in a secure and easy way.</p>
+            <div class="info">
+                <h1>Connect with alita in Zood</h1>
+                <p class="desc">By using Zood Location the device alita is using safely shares its location. The application is free and enables you to keep track of your family and friends in a secure and easy way.</p>
 
-            <h2>Download     <img src="images/location_icon.svg" class="inline-svg">    Zood Location and safely share your location.</h2>
-            <img class="download-btn" src="images/gplay-badge.svg">
+                <h2>Download     <img src="images/location_icon.svg" class="inline-svg">    Zood Location and safely share your location.</h2>
+                <a href="https://play.google.com/apps/testing/xyz.zood.george"><img class="download-btn" alt="download on google play" src="images/gplay-badge.svg"></a>
+            </div>
+            <section class='privacy-policy'>
+                <div class="container">
+                    <h5>Privacy Policy</h5>
+                    <p>We take your privacy very seriously. We take it so seriously that there's not much to put in our policy. In short, we don't track anything you do on this website. No analytics, no hidden pixels, no cookies, no beacons. Nothing. Nada. Zip. Zero.</p>
+                </div>
+            </section>
+            <section class="copyright">
+                <div class="container">
+                    <ul>
+                        <li>© 2019 Zood. All rights reserved.</li>
+
+                    </ul>
+                </div>
+
+            </section>
         </footer>
         <script>
             console.log("window.sodium setup");

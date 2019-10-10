@@ -64,7 +64,9 @@ function initMap() {
   app.map = new google.maps.Map(document.getElementById("map"), {
     center: { lat: lat, lng: lng },
     zoom: zoom,
-    mapTypeControl: false
+    streetViewControl: false,
+    mapTypeControl: false,
+    fullscreenControl: false
   });
 }
 async function onPackageReceived(pkg) {

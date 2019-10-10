@@ -306,7 +306,7 @@ header {
 }
 
 #map {
-    width: 100vw;
+    width: 100%;
     position: absolute;
     top: 0;
     height: 55vh;
@@ -322,21 +322,20 @@ header {
 
 .address-box {
     position: absolute;
-    top: calc(-8vh + -64px);
+    top: -180px;
     z-index: 10;
     background: #fff;
-    margin: 0 8vw;
-    left: 0;
-    right: 0;
+    min-width: 40vw;
+    margin: 0 auto;
     box-shadow: 0px 15px 50px 0 rgba(7, 29, 56, 0.15);
     padding: 1.5rem;
 }
 
-.address-box span {
+.address-box .subheading .time {
     color: #999999;
     font-weight: 400;
     font-family: Roboto;
-    font-size: 1.4rem;
+    font-size: 1rem;
     line-height: 1.67;
     align-self: baseline;
 }
@@ -376,9 +375,16 @@ main {
 
 }
 
+.info {
+    padding: 0 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    text-align: center;
+}
+
 footer {
     position: relative;
-    padding: 0 2.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -407,24 +413,177 @@ h1 {
 
 }
 
-.address-box .heading {
+.address-box .subheading {
     display: flex;
     align-items: center;
     justify-content: start;
     flex-direction: row;
+    margin: .5rem 0;
+}
+
+.heading h2 {
+    text-align: left;
+}
+
+.compass {
+    display: inline-block;
+
 }
 
 
-img.battery {
-    min-height: 13px;
-    display: block;
-    margin-right: 1.25rem;
+
+.battery {
+    height: 24px;
+    width: 24px;
+    display: inline-block;
 }
 
+.battery-power {
+    color: #3cdd56;
+    font-weight: 400;
+    font-family: Roboto;
+    font-size: 1rem;
+    line-height: 1.67;
+    align-self: baseline;
+}
+
+.battery-20 {
+    background: url('../images/battery/20.svg');
+}
+
+.battery-30 {
+    background: url('../images/battery/30.svg');
+}
+
+.battery-50 {
+    background: url('../images/battery/50.svg');
+}
+
+.battery-60 {
+    background: url('../images/battery/60.svg');
+}
+
+.battery-80 {
+    background: url('../images/battery/80.svg');
+}
+
+.battery-90 {
+    background: url('../images/battery/90.svg');
+}
+
+.battery-100 {
+    background: url('../images/battery/100.svg');
+}
 
 
 .download-btn {
-    width: 180px;
+    width: 175px;
     height: auto;
     margin-top: 2rem;
+}
+
+.logo-tagline {
+    visibility: hidden;
+    display: none;
+}
+
+section.privacy-policy {
+    padding: 3.75rem 0;
+    margin-top: 6rem;
+    background-color: #333333;
+    width: 100%;
+    max-width: 100%;
+}
+
+.privacy-policy h5 {
+    font-family: Montserrat, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.privacy-policy p {
+    font-family: Lato;
+    font-size: 0.9375rem;
+    line-height: 1.67;
+    text-align: left;
+    color: #999999;
+}
+
+.container {
+    width: 1000px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.copyright ul {
+    display: flex;
+    list-style-type: none;
+}
+
+.copyright {
+    background-color: #222222;
+    font-family: Lato, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.67;
+    padding: 2.25rem 0;
+    width: 100%;
+    letter-spacing: normal;
+    text-align: left;
+    color: #666666;
+}
+
+.container {
+    padding: 0 1rem;
+}
+
+@media only screen and (min-width: 641px) {
+    .logo {
+        width: 104px;
+        height: auto;
+
+    }
+
+    header {
+        position: relative;
+        width: 100%;
+        text-align: center;
+        height: 160px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom-right-radius: 0;
+        ;
+    }
+
+    .wrapper {
+        position: relative;
+        flex-direction: column;
+    }
+
+    #map {
+        position: static;
+    }
+
+    footer {
+        margin-top: 150px;
+    }
+
+    footer .desc {
+        line-height: 1.56;
+        font-size: 1.2rem;
+        max-width: 900px;
+        text-align: center;
+    }
+
+    .logo-tagline {
+        visibility: visible;
+        display: block;
+        font-family: Lato;
+        font-size: 1rem;
+
+        line-height: 1.56;
+
+        color: #666666;
+    }
 }

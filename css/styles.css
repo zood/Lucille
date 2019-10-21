@@ -375,6 +375,7 @@ main {
 
 }
 
+
 .info {
     padding: 0 2.5rem;
     display: flex;
@@ -559,6 +560,7 @@ section.privacy-policy {
     .wrapper {
         position: relative;
         flex-direction: column;
+
     }
 
     #map {

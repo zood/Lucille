@@ -53,7 +53,6 @@ function initMap() {
   let lat = 0;
   let lng = 0;
   let zoom = 2;
-
   // if we already have a location, center us there
   if (app.lastLocation != null) {
     console.log("We already have the initial location");
@@ -136,9 +135,12 @@ async function run() {
   if (secretKeyElement) {
     secretKeyElement.innerText = sodium.to_hex(app.secretKey);
   }
-  let usernameElement = document.getElementById("username");
+  let usernameElement = document.querySelectorAll(".username");
   if (usernameElement) {
-    usernameElement.innerText = app.username;
+    [].forEach.call(usernameElement, function(name) {
+      // do whatever
+      name.innerText = app.username;
+    });
   }
   let boxIdElement = document.getElementById("box_id");
   if (boxIdElement) {

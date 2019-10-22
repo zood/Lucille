@@ -247,24 +247,6 @@ var zood;
         }
     }
     zood.PublicKeyResponse = PublicKeyResponse;
-    // export class UserPublicKeyResponse {
-    //     public_key!: Uint8Array;
-    //     static fromHttpResponse(response: any): UserPublicKeyResponse | null {
-    //         let json: any;
-    //         try {
-    //             json = JSON.parse(response);
-    //         } catch (err) {
-    //             return null;
-    //         }
-    //         return this.fromJson(json);
-    //     }
-    //     static fromJson(json: any): UserPublicKeyResponse | null {
-    //         let upkr = new UserPublicKeyResponse();
-    //         try {
-    //             upkr.public_key = uint8ArrayFromJsonFail(json, "public_key");
-    //         }
-    //     }
-    // }
     function booleanFromJson(json, fieldName) {
         let b = json[fieldName];
         if (b == null) {
@@ -309,6 +291,7 @@ var zood;
         }
         return str;
     }
+    zood.stringFromJson = stringFromJson;
     function stringFromJsonFail(json, fieldName) {
         let str = stringFromJson(json, fieldName);
         if (str == null) {
@@ -670,7 +653,6 @@ var zood;
                         this.onPackageReceived(pkg);
                     }
                 }
-                // this.handleDroppedPackage(binMsg);
             }
             else if (binMsg[0] == ServerMsgPushNotification) {
                 this.handlePushNotification(binMsg);
@@ -679,27 +661,6 @@ var zood;
                 console.log("zood.Socket received an invalid/unknown message", binMsg[1]);
             }
         }
-        // private handleDroppedPackage(msg: Uint8Array): void {
-        //     // sanity check
-        //     let minSize = 1 + DROP_BOX_ID_LENGTH + 2;
-        //     if (msg.length < minSize) {
-        //         console.log("zood.Socket received a package message that is way too small")
-        //         return;
-        //     }
-        //     let boxId = new Uint8Array(new ArrayBuffer(DROP_BOX_ID_LENGTH));
-        //     for (let i = 0; i < DROP_BOX_ID_LENGTH; i++) {
-        //         boxId[i] = msg[i + 1];
-        //     }
-        //     let pkgBytes = new Uint8Array(new ArrayBuffer(msg.length - 1 - DROP_BOX_ID_LENGTH));
-        //     let offset = 1 + DROP_BOX_ID_LENGTH;
-        //     for (let i = offset; i < msg.length; i++) {
-        //         pkgBytes[i - offset] = msg[i];
-        //     }
-        //     let pkg = { boxId: boxId, bytes: pkgBytes };
-        //     if (this.onPackageReceived != null) {
-        //         this.onPackageReceived(pkg);
-        //     }
-        // }
         handlePushNotification(msg) {
             console.log("handlePushNotification");
             // let pnBytes = new Uint8Array(msg.length - 1);

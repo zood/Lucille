@@ -350,28 +350,6 @@ namespace zood {
         }
     }
 
-    // export class UserPublicKeyResponse {
-    //     public_key!: Uint8Array;
-
-    //     static fromHttpResponse(response: any): UserPublicKeyResponse | null {
-    //         let json: any;
-    //         try {
-    //             json = JSON.parse(response);
-    //         } catch (err) {
-    //             return null;
-    //         }
-
-    //         return this.fromJson(json);
-    //     }
-
-    //     static fromJson(json: any): UserPublicKeyResponse | null {
-    //         let upkr = new UserPublicKeyResponse();
-    //         try {
-    //             upkr.public_key = uint8ArrayFromJsonFail(json, "public_key");
-    //         }
-    //     }
-    // }
-
     function booleanFromJson(json: any, fieldName: string): boolean | null {
         let b = json[fieldName];
         if (b == null) {
@@ -410,7 +388,7 @@ namespace zood {
         return n;
     }
 
-    function stringFromJson(json: any, fieldName: string): string | null {
+    export function stringFromJson(json: any, fieldName: string): string | null {
         let str = json[fieldName];
         if (str == null) {
             return null;
@@ -456,6 +434,17 @@ namespace zood {
             throw "'" + fieldName + "' is not a valid base64 field";
         }
         return bytes;
+    }
+
+    export const enum MovementType {
+        Bicycle = "bicycle",
+        OnFoot = "on_foot",
+        Running = "running",
+        Stationary = "stationary",
+        Tilting = "tilting",
+        Unknown = "unknown",
+        Vehicle = "vehicle",
+        Walking = "walking",
     }
 
     export class PushNotification {
@@ -833,38 +822,12 @@ namespace zood {
                         this.onPackageReceived(pkg);
                     }
                 }
-                // this.handleDroppedPackage(binMsg);
             } else if (binMsg[0] == ServerMsgPushNotification) {
                 this.handlePushNotification(binMsg);
             } else {
                 console.log("zood.Socket received an invalid/unknown message", binMsg[1]);
             }
         }
-
-        // private handleDroppedPackage(msg: Uint8Array): void {
-        //     // sanity check
-        //     let minSize = 1 + DROP_BOX_ID_LENGTH + 2;
-        //     if (msg.length < minSize) {
-        //         console.log("zood.Socket received a package message that is way too small")
-        //         return;
-        //     }
-
-        //     let boxId = new Uint8Array(new ArrayBuffer(DROP_BOX_ID_LENGTH));
-        //     for (let i = 0; i < DROP_BOX_ID_LENGTH; i++) {
-        //         boxId[i] = msg[i + 1];
-        //     }
-
-        //     let pkgBytes = new Uint8Array(new ArrayBuffer(msg.length - 1 - DROP_BOX_ID_LENGTH));
-        //     let offset = 1 + DROP_BOX_ID_LENGTH;
-        //     for (let i = offset; i < msg.length; i++) {
-        //         pkgBytes[i - offset] = msg[i];
-        //     }
-
-        //     let pkg = { boxId: boxId, bytes: pkgBytes };
-        //     if (this.onPackageReceived != null) {
-        //         this.onPackageReceived(pkg);
-        //     }
-        // }
 
         private handlePushNotification(msg: Uint8Array): void {
             console.log("handlePushNotification");

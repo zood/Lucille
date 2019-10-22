@@ -56,7 +56,10 @@ function initMap() {
     }
     app.map = new google.maps.Map(document.getElementById("map"), {
         center: { lat: lat, lng: lng },
-        zoom: zoom
+        zoom: zoom,
+        streetViewControl: false,
+        mapTypeControl: false,
+        fullscreenControl: false
     });
 }
 async function onPackageReceived(pkg) {
@@ -85,6 +88,44 @@ async function onPackageReceived(pkg) {
     }
     console.log(locInfoStr);
     app.lastLocation = locInfo;
+    let batteryPowerDiv = document.getElementById("battery-power");
+    if (locInfo.battery_level != null) {
+        batteryPowerDiv.innerText = `${locInfo.battery_level}%`;
+    }
+    else {
+        batteryPowerDiv.innerText = "";
+    }
+    let updateTimeDiv = document.getElementById("update-time");
+    let rtf = new Intl.RelativeTimeFormat(navigator.languages[0], { numeric: "auto", style: "short" });
+    let oneDayMs = 86400 * 1000;
+    let msAgo = new Date().getTime() - locInfo.time;
+    let ago = "";
+    console.log(new Date(locInfo.time).toLocaleDateString());
+    if (msAgo < 60 * 1000) {
+        ago = "Now";
+    }
+    else if (msAgo < 60 * 60 * 1000) {
+        ago = rtf.format(-msAgo / 1000 / 60, "minute");
+    }
+    else if (msAgo < oneDayMs) {
+        ago = rtf.format(-msAgo / 1000 / 60 / 60, "hour");
+    }
+    else if (msAgo < oneDayMs * 7) {
+        ago = rtf.format(-msAgo / oneDayMs, "day");
+    }
+    else {
+        let date = new Date(locInfo.time);
+        ago = date.toLocaleDateString();
+    }
+    updateTimeDiv.innerHTML = ` • &nbsp;  ${ago}`;
+    let compass = document.getElementById("compass");
+    if (locInfo.bearing != null) {
+        compass.style.display = "inline-block";
+        compass.style.transform = `rotate(${locInfo.bearing}deg)`;
+    }
+    else {
+        compass.style.display = "none";
+    }
     // Make sure the map has loaded first
     if (app.map == null) {
         return;
@@ -93,7 +134,8 @@ async function onPackageReceived(pkg) {
     // if we already have a marker for the user, update it. otherwise, build one.
     if (app.marker == null) {
         app.marker = new google.maps.Marker({
-            position: pos, map: app.map,
+            position: pos,
+            map: app.map,
             title: app.username
         });
         let mapOpts = {
@@ -105,33 +147,35 @@ async function onPackageReceived(pkg) {
     else {
         app.marker.setOptions({ position: pos });
     }
+    try {
+        let rg = await locationiq.getReverseGeocoding(locInfo.latitude, locInfo.longitude);
+        let addressElem = document.getElementById("address");
+        addressElem.innerText = rg.getAddress();
+        // console.log("received rg:", rg);
+        // console.log("addr:", rg.getAddress());
+    }
+    catch (err) {
+        console.log("failed to update address:", err);
+    }
 }
 async function run() {
     console.log("run");
     if (!extractDataFromFragment()) {
         return;
     }
-    let secretKeyElement = document.getElementById("secret_key");
-    if (secretKeyElement) {
-        secretKeyElement.innerText = sodium.to_hex(app.secretKey);
-    }
-    let usernameElement = document.getElementById("username");
-    if (usernameElement) {
-        usernameElement.innerText = app.username;
-    }
-    let boxIdElement = document.getElementById("box_id");
-    if (boxIdElement) {
-        boxIdElement.innerText = sodium.to_hex(app.receivingBoxId);
-    }
-    let userIdElement = document.getElementById("user_id");
-    if (userIdElement) {
-        userIdElement.innerText = sodium.to_hex(app.userId);
+    let usernameSpans = document.getElementsByClassName("username");
+    for (let i = 0; i < usernameSpans.length; i++) {
+        let span = usernameSpans.item(i);
+        if (span == null) {
+            break;
+        }
+        span.innerText = app.username;
     }
     try {
         let client = new zood.Client(null);
         let pkr = await client.getUserPublicKey(app.userId);
         app.senderPublicKey = pkr.public_key;
-        // console.log("got spk:", gPageState.senderPublicKey);
+        // console.log("got spk:", app.senderPublicKey);
     }
     catch (err) {
         console.log("error retrieving public key: ", err);

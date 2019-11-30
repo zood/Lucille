@@ -133,27 +133,7 @@ async function onPackageReceived(pkg) {
         batteryPowerDiv.innerText = "";
     }
     let updateTimeDiv = document.getElementById("update-time");
-    let rtf = new Intl.RelativeTimeFormat(navigator.languages[0], { numeric: "auto", style: "short" });
-    let oneDayMs = 86400 * 1000;
-    let msAgo = new Date().getTime() - locInfo.time;
-    let ago = "";
-    console.log(new Date(locInfo.time).toLocaleDateString());
-    if (msAgo < 60 * 1000) {
-        ago = "Now";
-    }
-    else if (msAgo < 60 * 60 * 1000) {
-        ago = rtf.format(-msAgo / 1000 / 60, "minute");
-    }
-    else if (msAgo < oneDayMs) {
-        ago = rtf.format(-msAgo / 1000 / 60 / 60, "hour");
-    }
-    else if (msAgo < oneDayMs * 7) {
-        ago = rtf.format(-msAgo / oneDayMs, "day");
-    }
-    else {
-        let date = new Date(locInfo.time);
-        ago = date.toLocaleDateString();
-    }
+    let ago = zdtime.relativeTime(new Date().getTime(), locInfo.time, "en-US");
     updateTimeDiv.innerHTML = ` • &nbsp;  ${ago}`;
     let compass = document.getElementById("compass");
     if (locInfo.bearing != null) {

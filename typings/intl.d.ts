@@ -8,4 +8,11 @@ declare namespace Intl {
     }
 
     type FormatUnit = "year" | "quarter" | "month" | "week" | "day" | "hour" | "minute" | "second";
+
+    type DateTimeFormatStyle = "short" | "medium" | "long" | "full"
+
+    export interface DateTimeFormatOptions {
+        dateStyle?: string
+        timeStyle?: string
+    }
 }

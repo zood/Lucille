@@ -430,8 +430,6 @@ h1 {
     display: none;
 }
 
-
-
 .battery {
     height: 24px;
     width: 24px;
@@ -447,34 +445,49 @@ h1 {
     align-self: baseline;
 }
 
+.battery-0 {
+    background: url('../images/battery/battery-0.svg')
+}
+
+.battery-10 {
+    background: url('../images/battery/battery-10.svg')
+}
+
 .battery-20 {
-    background: url('../images/battery/20.svg');
+    background: url('../images/battery/battery-20.svg')
 }
 
 .battery-30 {
-    background: url('../images/battery/30.svg');
+    background: url('../images/battery/battery-30.svg')
+}
+
+.battery-40 {
+    background: url('../images/battery/battery-40.svg')
 }
 
 .battery-50 {
-    background: url('../images/battery/50.svg');
+    background: url('../images/battery/battery-50.svg')
 }
 
 .battery-60 {
-    background: url('../images/battery/60.svg');
+    background: url('../images/battery/battery-60.svg')
+}
+
+.battery-70 {
+    background: url('../images/battery/battery-70.svg')
 }
 
 .battery-80 {
-    background: url('../images/battery/80.svg');
+    background: url('../images/battery/battery-80.svg')
 }
 
 .battery-90 {
-    background: url('../images/battery/90.svg');
+    background: url('../images/battery/battery-90.svg')
 }
 
 .battery-100 {
-    background: url('../images/battery/100.svg');
+    background: url('../images/battery/battery-100.svg')
 }
-
 
 .download-btn {
     width: 175px;

@@ -42,6 +42,43 @@ function extractDataFromFragment() {
     }
     return true;
 }
+function getBatteryClassName(level) {
+    let clazzName = "battery ";
+    if (level >= 95) {
+        clazzName += "battery-100";
+    }
+    else if (level >= 85) {
+        clazzName += "battery-90";
+    }
+    else if (level >= 75) {
+        clazzName += "battery-80";
+    }
+    else if (level >= 65) {
+        clazzName += "battery-70";
+    }
+    else if (level >= 55) {
+        clazzName += "battery-60";
+    }
+    else if (level >= 45) {
+        clazzName += "battery-50";
+    }
+    else if (level >= 35) {
+        clazzName += "battery-40";
+    }
+    else if (level >= 25) {
+        clazzName += "battery-30";
+    }
+    else if (level >= 15) {
+        clazzName += "battery-20";
+    }
+    else if (level >= 5) {
+        clazzName += "battery-10";
+    }
+    else {
+        clazzName += "battery-0";
+    }
+    return clazzName;
+}
 // Gets called by the GMaps SDK once it's done loading
 function initMap() {
     let lat = 0;
@@ -147,6 +184,9 @@ async function onPackageReceived(pkg) {
     else {
         app.marker.setOptions({ position: pos });
     }
+    // set the battery level
+    let batteryIcon = document.getElementById("battery-icon");
+    batteryIcon.className = getBatteryClassName(locInfo.battery_level);
     try {
         let rg = await locationiq.getReverseGeocoding(locInfo.latitude, locInfo.longitude);
         let addressElem = document.getElementById("address");

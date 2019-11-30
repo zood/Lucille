@@ -35,7 +35,12 @@ var zdtime;
             let nowDate = new Date(thenMs);
             ago = nowDate.toLocaleDateString(locale, {
                 dateStyle: "medium",
-                timeStyle: "short"
+                timeStyle: "short",
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+                hour: "numeric",
+                minute: "numeric"
             });
         }
         return ago;

@@ -400,9 +400,7 @@ h1 {
 }
 
 .transportation-mode {
-    padding: 0 1rem;
-    fill: #999999;
-
+    padding: 0 0.25rem 0 0.5rem;
 }
 
 .address-box h2 {

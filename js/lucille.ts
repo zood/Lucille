@@ -185,10 +185,9 @@ async function onPackageReceived(pkg: zood.Package) {
 		batteryPowerDiv.innerText = "";
 	}
 
-
 	let updateTimeDiv = document.getElementById("update-time") as HTMLDivElement;
 	let ago = zdtime.relativeTime(new Date().getTime(), locInfo.time, "en-US")
-	updateTimeDiv.innerHTML = ` • &nbsp;  ${ago}`;
+	updateTimeDiv.innerHTML = ` &nbsp; • &nbsp;  ${ago}`;
 
 	let compass = document.getElementById("compass") as HTMLSpanElement;
 	if (locInfo.bearing != null) {
@@ -197,6 +196,26 @@ async function onPackageReceived(pkg: zood.Package) {
 	} else {
 		compass.style.display = "none";
 	}
+
+	let transportationMode = document.getElementById("transportation-mode") as HTMLImageElement;
+	switch (locInfo.movement) {
+		case zood.MovementType.Bicycle:
+			transportationMode.src = "../images/activities/bike.svg";
+			break;
+		case zood.MovementType.OnFoot:
+		case zood.MovementType.Running:
+		case zood.MovementType.Walking:
+			transportationMode.src = "../images/activities/walk.svg";
+			break;
+		case zood.MovementType.Vehicle:
+			transportationMode.src = "../images/activities/car.svg";
+			break;
+		case null:
+		default:
+			transportationMode.src = ""
+			break;
+	}
+	transportationMode.hidden = transportationMode.src == ""
 
 	// Make sure the map has loaded first
 	if (app.map == null) {
@@ -228,8 +247,6 @@ async function onPackageReceived(pkg: zood.Package) {
 		let rg = await locationiq.getReverseGeocoding(locInfo.latitude, locInfo.longitude);
 		let addressElem = document.getElementById("address") as HTMLParagraphElement;
 		addressElem.innerText = rg.getAddress();
-		// console.log("received rg:", rg);
-		// console.log("addr:", rg.getAddress());
 	} catch (err) {
 		console.log("failed to update address:", err)
 	}

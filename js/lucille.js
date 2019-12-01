@@ -134,7 +134,7 @@ async function onPackageReceived(pkg) {
     }
     let updateTimeDiv = document.getElementById("update-time");
     let ago = zdtime.relativeTime(new Date().getTime(), locInfo.time, "en-US");
-    updateTimeDiv.innerHTML = ` • &nbsp;  ${ago}`;
+    updateTimeDiv.innerHTML = ` &nbsp; • &nbsp;  ${ago}`;
     let compass = document.getElementById("compass");
     if (locInfo.bearing != null) {
         compass.style.display = "inline-block";
@@ -143,6 +143,25 @@ async function onPackageReceived(pkg) {
     else {
         compass.style.display = "none";
     }
+    let transportationMode = document.getElementById("transportation-mode");
+    switch (locInfo.movement) {
+        case "bicycle" /* Bicycle */:
+            transportationMode.src = "../images/activities/bike.svg";
+            break;
+        case "on_foot" /* OnFoot */:
+        case "running" /* Running */:
+        case "walking" /* Walking */:
+            transportationMode.src = "../images/activities/walk.svg";
+            break;
+        case "vehicle" /* Vehicle */:
+            transportationMode.src = "../images/activities/car.svg";
+            break;
+        case null:
+        default:
+            transportationMode.src = "";
+            break;
+    }
+    transportationMode.hidden = transportationMode.src == "";
     // Make sure the map has loaded first
     if (app.map == null) {
         return;
@@ -171,8 +190,6 @@ async function onPackageReceived(pkg) {
         let rg = await locationiq.getReverseGeocoding(locInfo.latitude, locInfo.longitude);
         let addressElem = document.getElementById("address");
         addressElem.innerText = rg.getAddress();
-        // console.log("received rg:", rg);
-        // console.log("addr:", rg.getAddress());
     }
     catch (err) {
         console.log("failed to update address:", err);

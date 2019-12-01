@@ -4,8 +4,9 @@ class Application {
 	receivingBoxId: Uint8Array;
 	userId: Uint8Array;
 	senderPublicKey: Uint8Array;
+	updateTimer: number | null;
 
-	lastLocation: LocationInfo | null;
+	private lastLocation: LocationInfo | null;
 
 	map: google.maps.Map | null;
 	marker: google.maps.Marker | null;
@@ -15,7 +16,133 @@ class Application {
 		this.map = null;
 		this.marker = null;
 	}
+
+	private getBatteryClassName(level: number): string {
+		let clazzName = "battery ";
+		if (level >= 95) {
+			clazzName += "battery-100";
+		} else if (level >= 85) {
+			clazzName += "battery-90";
+		} else if (level >= 75) {
+			clazzName += "battery-80";
+		} else if (level >= 65) {
+			clazzName += "battery-70";
+		} else if (level >= 55) {
+			clazzName += "battery-60";
+		} else if (level >= 45) {
+			clazzName += "battery-50";
+		} else if (level >= 35) {
+			clazzName += "battery-40";
+		} else if (level >= 25) {
+			clazzName += "battery-30";
+		} else if (level >= 15) {
+			clazzName += "battery-20";
+		} else if (level >= 5) {
+			clazzName += "battery-10";
+		} else {
+			clazzName += "battery-0";
+		}
+
+		return clazzName;
+	}
+
+	getLocation(): LocationInfo | null {
+		return this.lastLocation;
+	}
+
+	async setLocation(locInfo: LocationInfo) {
+		this.lastLocation = locInfo;
+
+		let batteryPowerDiv = document.getElementById("battery-power") as HTMLDivElement;
+		if (locInfo.battery_level != null) {
+			batteryPowerDiv.innerText = `${locInfo.battery_level}%`;
+		} else {
+			batteryPowerDiv.innerText = "";
+		}
+
+		this.updateTimeAgo();
+		// clear out the old timer, and schedule a new one
+		if (this.updateTimer != null) {
+			clearInterval(this.updateTimer);
+		}
+		setInterval(this.updateTimeAgo, 2 * 1000);
+
+		let compass = document.getElementById("compass") as HTMLSpanElement;
+		if (locInfo.bearing != null) {
+			compass.style.display = "inline-block";
+			compass.style.transform = `rotate(${locInfo.bearing}deg)`;
+		} else {
+			compass.style.display = "none";
+		}
+
+		let transportationMode = document.getElementById("transportation-mode") as HTMLImageElement;
+		switch (locInfo.movement) {
+			case zood.MovementType.Bicycle:
+				transportationMode.src = "../images/activities/bike.svg";
+				break;
+			case zood.MovementType.OnFoot:
+			case zood.MovementType.Running:
+			case zood.MovementType.Walking:
+				transportationMode.src = "../images/activities/walk.svg";
+				break;
+			case zood.MovementType.Vehicle:
+				transportationMode.src = "../images/activities/car.svg";
+				break;
+			case null:
+			default:
+				transportationMode.src = ""
+				break;
+		}
+		transportationMode.hidden = transportationMode.src == ""
+
+		// Make sure the map has loaded first
+		if (app.map == null) {
+			return;
+		}
+
+		let pos = { lat: locInfo.latitude, lng: locInfo.longitude };
+		// if we already have a marker for the user, update it. otherwise, build one.
+		if (app.marker == null) {
+			app.marker = new google.maps.Marker({
+				position: pos,
+				map: app.map,
+				title: app.username
+			});
+			let mapOpts = {
+				zoom: 15,
+				center: pos
+			};
+			app.map.setOptions(mapOpts);
+		} else {
+			app.marker.setOptions({ position: pos });
+		}
+
+		// set the battery level
+		let batteryIcon = document.getElementById("battery-icon") as HTMLSpanElement;
+		batteryIcon.className = this.getBatteryClassName(locInfo.battery_level);
+
+		try {
+			let rg = await locationiq.getReverseGeocoding(locInfo.latitude, locInfo.longitude);
+			let addressElem = document.getElementById("address") as HTMLParagraphElement;
+			addressElem.innerText = rg.getAddress();
+		} catch (err) {
+			console.log("failed to update address:", err)
+		}
+	}
+
+	private updateTimeAgo(): void {
+		console.log("updateTimeAgo");
+		let updateTimeDiv = document.getElementById("update-time") as HTMLDivElement;
+		let location = this.lastLocation;
+		if (location == null) {
+			updateTimeDiv.innerHTML = ` &nbsp; • &nbsp;  …`;
+			return;
+		}
+		let ago = zdtime.relativeTime(new Date().getTime(), location.time, "en-US")
+		updateTimeDiv.innerHTML = ` &nbsp; • &nbsp;  ${ago}`;
+	}
 }
+
 const app = new Application();
 
 interface EncryptedData {
@@ -85,45 +212,17 @@ function extractDataFromFragment(): boolean {
 	return true;
 }
 
-function getBatteryClassName(level: number): string {
-	let clazzName = "battery ";
-	if (level >= 95) {
-		clazzName += "battery-100";
-	} else if (level >= 85) {
-		clazzName += "battery-90";
-	} else if (level >= 75) {
-		clazzName += "battery-80";
-	} else if (level >= 65) {
-		clazzName += "battery-70";
-	} else if (level >= 55) {
-		clazzName += "battery-60";
-	} else if (level >= 45) {
-		clazzName += "battery-50";
-	} else if (level >= 35) {
-		clazzName += "battery-40";
-	} else if (level >= 25) {
-		clazzName += "battery-30";
-	} else if (level >= 15) {
-		clazzName += "battery-20";
-	} else if (level >= 5) {
-		clazzName += "battery-10";
-	} else {
-		clazzName += "battery-0";
-	}
-
-	return clazzName;
-}
-
 // Gets called by the GMaps SDK once it's done loading
 function initMap() {
 	let lat = 0;
 	let lng = 0;
 	let zoom = 2;
 	// if we already have a location, center us there
-	if (app.lastLocation != null) {
+	let loc = app.getLocation();
+	if (loc != null) {
 		console.log("We already have the initial location");
-		lat = app.lastLocation.latitude;
-		lng = app.lastLocation.longitude;
+		lat = loc.latitude;
+		lng = loc.longitude;
 		zoom = 15;
 	}
 	app.map = new google.maps.Map(document.getElementById("map"), {
@@ -176,80 +275,7 @@ async function onPackageReceived(pkg: zood.Package) {
 		return;
 	}
 	console.log(locInfoStr);
-	app.lastLocation = locInfo;
-
-	let batteryPowerDiv = document.getElementById("battery-power") as HTMLDivElement;
-	if (locInfo.battery_level != null) {
-		batteryPowerDiv.innerText = `${locInfo.battery_level}%`;
-	} else {
-		batteryPowerDiv.innerText = "";
-	}
-
-	let updateTimeDiv = document.getElementById("update-time") as HTMLDivElement;
-	let ago = zdtime.relativeTime(new Date().getTime(), locInfo.time, "en-US")
-	updateTimeDiv.innerHTML = ` &nbsp; • &nbsp;  ${ago}`;
-
-	let compass = document.getElementById("compass") as HTMLSpanElement;
-	if (locInfo.bearing != null) {
-		compass.style.display = "inline-block";
-		compass.style.transform = `rotate(${locInfo.bearing}deg)`;
-	} else {
-		compass.style.display = "none";
-	}
-
-	let transportationMode = document.getElementById("transportation-mode") as HTMLImageElement;
-	switch (locInfo.movement) {
-		case zood.MovementType.Bicycle:
-			transportationMode.src = "../images/activities/bike.svg";
-			break;
-		case zood.MovementType.OnFoot:
-		case zood.MovementType.Running:
-		case zood.MovementType.Walking:
-			transportationMode.src = "../images/activities/walk.svg";
-			break;
-		case zood.MovementType.Vehicle:
-			transportationMode.src = "../images/activities/car.svg";
-			break;
-		case null:
-		default:
-			transportationMode.src = ""
-			break;
-	}
-	transportationMode.hidden = transportationMode.src == ""
-
-	// Make sure the map has loaded first
-	if (app.map == null) {
-		return;
-	}
-
-	let pos = { lat: locInfo.latitude, lng: locInfo.longitude };
-	// if we already have a marker for the user, update it. otherwise, build one.
-	if (app.marker == null) {
-		app.marker = new google.maps.Marker({
-			position: pos,
-			map: app.map,
-			title: app.username
-		});
-		let mapOpts = {
-			zoom: 15,
-			center: pos
-		};
-		app.map.setOptions(mapOpts);
-	} else {
-		app.marker.setOptions({ position: pos });
-	}
-
-	// set the battery level
-	let batteryIcon = document.getElementById("battery-icon") as HTMLSpanElement;
-	batteryIcon.className = getBatteryClassName(locInfo.battery_level);
-
-	try {
-		let rg = await locationiq.getReverseGeocoding(locInfo.latitude, locInfo.longitude);
-		let addressElem = document.getElementById("address") as HTMLParagraphElement;
-		addressElem.innerText = rg.getAddress();
-	} catch (err) {
-		console.log("failed to update address:", err)
-	}
+	app.setLocation(locInfo);
 }
 
 async function run() {

@@ -45,7 +45,7 @@ class Application {
         return this.lastLocation;
     }
     async setLocation(locInfo) {
-        this.lastLocation = locInfo;
+        app.lastLocation = locInfo;
         let batteryPowerDiv = document.getElementById("battery-power");
         if (locInfo.battery_level != null) {
             batteryPowerDiv.innerText = `${locInfo.battery_level}%`;
@@ -121,7 +121,7 @@ class Application {
     }
     updateTimeAgo() {
         let updateTimeDiv = document.getElementById("update-time");
-        let location = this.lastLocation;
+        let location = app.lastLocation;
         if (location == null) {
             updateTimeDiv.innerHTML = ` &nbsp; • &nbsp;  …`;
             return;

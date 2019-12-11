@@ -287,6 +287,11 @@ svg:not([fill]) {
     font-size: 14px;
 }
 
+main,
+.wrapper {
+    overflow: hidden;
+}
+
 .wrapper {
     position: relative;
     display: flex;
@@ -324,7 +329,7 @@ header {
     top: -180px;
     z-index: 10;
     background: #fff;
-    min-width: 40vw;
+    width: 40vw;
     margin: 0 auto;
     box-shadow: 0px 15px 50px 0 rgba(7, 29, 56, 0.15);
     padding: 1.5rem;
@@ -489,7 +494,18 @@ h1 {
 .download-btn {
     width: 175px;
     height: auto;
+    margin-left: .25rem;
+    margin-right: .25rem;
+    margin-bottom: .5rem;
+}
+
+.download-btns {
+    width: 100%;
+    flex-wrap: wrap;
     margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .logo-tagline {

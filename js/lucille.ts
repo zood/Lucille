@@ -51,7 +51,7 @@ class Application {
 	}
 
 	async setLocation(locInfo: LocationInfo) {
-		this.lastLocation = locInfo;
+		app.lastLocation = locInfo;
 
 		let batteryPowerDiv = document.getElementById("battery-power") as HTMLDivElement;
 		if (locInfo.battery_level != null) {
@@ -65,7 +65,7 @@ class Application {
 		if (this.updateTimer != null) {
 			clearInterval(this.updateTimer);
 		}
-		setInterval(this.updateTimeAgo, 2 * 1000);
+		setInterval(this.updateTimeAgo, 60 * 1000);
 
 		let compass = document.getElementById("compass") as HTMLSpanElement;
 		if (locInfo.bearing != null) {
@@ -131,9 +131,8 @@ class Application {
 	}
 
 	private updateTimeAgo(): void {
-		console.log("updateTimeAgo");
 		let updateTimeDiv = document.getElementById("update-time") as HTMLDivElement;
-		let location = this.lastLocation;
+		let location = app.lastLocation;
 		if (location == null) {
 			updateTimeDiv.innerHTML = ` &nbsp; • &nbsp;  …`;
 			return;

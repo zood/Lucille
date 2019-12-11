@@ -1,110 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-        <!-- BEGIN FAVICON NIGHTMARE -->
-        <!-- Compliments of https://realfavicongenerator.net -->
-        <link rel="apple-touch-icon" sizes="180x180" href="/images/favicons/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/images/favicons/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/images/favicons/favicon-16x16.png">
-        <link rel="manifest" href="/images/favicons/site.webmanifest">
-        <link rel="mask-icon" href="/images/favicons/safari-pinned-tab.svg" color="#5cd1ff">
-        <link rel="shortcut icon" href="/images/favicons/favicon.ico">
-        <meta name="msapplication-TileColor" content="#5cd1ff">
-        <meta name="msapplication-config" content="/images/favicons/browserconfig.xml">
-        <meta name="theme-color" content="#ffffff">
-        <!-- END FAVICON NIGHTMARE -->
+    <!-- BEGIN FAVICON NIGHTMARE -->
+    <!-- Compliments of https://realfavicongenerator.net -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/images/favicons/site.webmanifest">
+    <link rel="mask-icon" href="/images/favicons/safari-pinned-tab.svg" color="#5cd1ff">
+    <link rel="shortcut icon" href="/images/favicons/favicon.ico">
+    <meta name="msapplication-TileColor" content="#5cd1ff">
+    <meta name="msapplication-config" content="/images/favicons/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+    <!-- END FAVICON NIGHTMARE -->
 
-        <title>Track location</title>
-        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"/>
-        <link href="./css/styles.css" rel="stylesheet"/>
-    </head>
+    <title>Track location</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <link href="./css/styles.css" rel="stylesheet" />
+</head>
 
-    <body>
-        <main>
-            <div class="wrapper">
-                <header>
-                    <div>
-                        <a href="https://www.zood.xyz"><img class="logo" alt="zood" src="images/zood-logo.svg"
+<body>
+    <main>
+        <div class="wrapper">
+            <header>
+                <div>
+                    <a href="https://www.zood.xyz"><img class="logo" alt="zood" src="images/zood-logo.svg"
                             width="73"></a>
-                        <p class="logo-tagline">The privacy company</p>
-                    </div>
-                </header>
-                <div id="map"></div>
+                    <p class="logo-tagline">The privacy company</p>
+                </div>
+            </header>
+            <div id="map"></div>
+
+        </div>
+    </main>
+    <footer>
+        <div class="address-box">
+            <div class="heading">
+
+                <h2>
+                    <span class="username" id="username">…</span>
+                    <span id="compass" class="compass"><img src="images/navigation.svg"></span>
+                </h2>
 
             </div>
-        </main>
-        <footer>
-            <div class="address-box">
-                <div class="heading">
-
-                    <h2>
-                        <span class="username" id="username">…</span>
-                        <span id="compass" class="compass"><img src="images/navigation.svg"></span>
-                    </h2>
-
-                </div>
-                <div class="subheading">
-                    <span id="battery-icon" class="battery"></span>
-                    <div id="battery-power" class="battery-power">…</div>
-                    <img id="transportation-mode" class="transportation-mode" src="">
-                    <div id="update-time" class="time">…</div>
-                </div>
-                <p id="address">…</p>
+            <div class="subheading">
+                <span id="battery-icon" class="battery"></span>
+                <div id="battery-power" class="battery-power">…</div>
+                <img id="transportation-mode" class="transportation-mode" src="">
+                <div id="update-time" class="time">…</div>
             </div>
-            <div class="info">
-                <h1>Connect with <span class="username" id="username">…</span> in Zood</h1>
-                <p class="desc">By using Zood Location the device <span class="username">…</span> is using safely shares its
+            <p id="address">…</p>
+        </div>
+        <div class="info">
+            <h1>Connect with <span class="username" id="username">…</span> in Zood</h1>
+            <p class="desc">By using Zood Location the device <span class="username">…</span> is using safely shares its
                 location. The application
                 is free and enables you to keep track of your family and friends in a secure and easy way.</p>
 
-                <h2>Download <img src="images/location_icon.svg" class="inline-svg"> Zood Location and safely share your
+            <h2>Download <img src="images/location_icon.svg" class="inline-svg"> Zood Location and safely share your
                 location.</h2>
-                <div class="download-btns">
+            <div class="download-btns">
 
-                    <a href="https://play.google.com/apps/testing/xyz.zood.george"><img class="download-btn"
-                    alt="download on google play" src="images/gplay-badge.svg"></a>
-                    <a href="https://testflight.apple.com/join/ySeXo9RA"><img class="download-btn"
-                    alt="download on apple store" src="images/app-store-badge.svg"></a>
-                </div>
-
+                <a href="https://play.google.com/apps/testing/xyz.zood.george"><img class="download-btn"
+                        alt="download on google play" src="images/gplay-badge.svg"></a>
+                <a href="https://testflight.apple.com/join/ySeXo9RA"><img class="download-btn"
+                        alt="download on apple store" src="images/app-store-badge.svg"></a>
             </div>
-            <section class='privacy-policy'>
-                <div class="container">
-                    <h5>Privacy Policy</h5>
-                    <p>We take your privacy very seriously. We take it so seriously that there's not much to put in our
-                    policy. In short, we don't track anything you do on this website. No analytics, no hidden pixels, no
-                    cookies, no beacons. Nothing. Nada. Zip. Zero.</p>
-                </div>
-            </section>
-            <section class="copyright">
-                <div class="container">
-                    <ul>
-                        <li>© 2019 Zood</li>
-                    </ul>
-                </div>
 
-            </section>
-        </footer>
-        <script>
-            console.log("window.sodium setup");
-            window.sodium = {
-                onload: function () {
-                    console.log("sodium initialized");
-                    run();
-                }
-            };
-        </script>
-        <script async src="./libs/sodium.0.7.4.js"></script>
-        <script src="js/zood.js"></script>
-        <script src="js/locationiq.js"></script>
-        <script src="js/zdtime.js"></script>
-        <script src="js/lucille.js"></script>
-        <script async defer
+        </div>
+        <section class='privacy-policy'>
+            <div class="container">
+                <h5>Privacy Policy</h5>
+                <p>We take your privacy very seriously. We take it so seriously that there's not much to put in our
+                    policy. In short, we don't track anything you do on this website. No analytics, no hidden pixels, no
+                    tracking cookies, no beacons. Nothing. Nada. Zip. Zero. If you have any questions, please
+                    <a href="https:/www.zood.xyz/contact">contact us</a>.</p>
+            </div>
+        </section>
+        <section class="copyright">
+            <div class="container">
+                <ul>
+                    <li>© 2019 Zood</li>
+                </ul>
+            </div>
+
+        </section>
+    </footer>
+    <script>
+        console.log("window.sodium setup");
+        window.sodium = {
+            onload: function () {
+                console.log("sodium initialized");
+                run();
+            }
+        };
+    </script>
+    <script async src="./libs/sodium.0.7.4.js"></script>
+    <script src="js/zood.js"></script>
+    <script src="js/locationiq.js"></script>
+    <script src="js/zdtime.js"></script>
+    <script src="js/lucille.js"></script>
+    <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkOAY7DArXbNdTFSvW8fehphYUIDFM0yw&callback=initMap"></script>
-    </body>
+</body>
 
 </html>

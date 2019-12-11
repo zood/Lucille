@@ -45,7 +45,7 @@ class Application {
         return this.lastLocation;
     }
     async setLocation(locInfo) {
-        this.lastLocation = locInfo;
+        app.lastLocation = locInfo;
         let batteryPowerDiv = document.getElementById("battery-power");
         if (locInfo.battery_level != null) {
             batteryPowerDiv.innerText = `${locInfo.battery_level}%`;
@@ -58,7 +58,7 @@ class Application {
         if (this.updateTimer != null) {
             clearInterval(this.updateTimer);
         }
-        setInterval(this.updateTimeAgo, 2 * 1000);
+        setInterval(this.updateTimeAgo, 60 * 1000);
         let compass = document.getElementById("compass");
         if (locInfo.bearing != null) {
             compass.style.display = "inline-block";
@@ -120,9 +120,8 @@ class Application {
         }
     }
     updateTimeAgo() {
-        console.log("updateTimeAgo");
         let updateTimeDiv = document.getElementById("update-time");
-        let location = this.lastLocation;
+        let location = app.lastLocation;
         if (location == null) {
             updateTimeDiv.innerHTML = ` &nbsp; • &nbsp;  …`;
             return;
@@ -184,9 +183,6 @@ function initMap() {
     app.map = new google.maps.Map(document.getElementById("map"), {
         center: { lat: lat, lng: lng },
         zoom: zoom,
-        zoomControlOptions: {
-            position: google.maps.ControlPosition.RIGHT_TOP
-        },
         streetViewControl: false,
         mapTypeControl: false,
         fullscreenControl: false

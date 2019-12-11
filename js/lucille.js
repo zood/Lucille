@@ -58,7 +58,7 @@ class Application {
         if (this.updateTimer != null) {
             clearInterval(this.updateTimer);
         }
-        setInterval(this.updateTimeAgo, 60 * 1000);
+        setInterval(this.updateTimeAgo, 2 * 1000);
         let compass = document.getElementById("compass");
         if (locInfo.bearing != null) {
             compass.style.display = "inline-block";
@@ -120,6 +120,7 @@ class Application {
         }
     }
     updateTimeAgo() {
+        console.log("updateTimeAgo");
         let updateTimeDiv = document.getElementById("update-time");
         let location = this.lastLocation;
         if (location == null) {
@@ -183,6 +184,9 @@ function initMap() {
     app.map = new google.maps.Map(document.getElementById("map"), {
         center: { lat: lat, lng: lng },
         zoom: zoom,
+        zoomControlOptions: {
+            position: google.maps.ControlPosition.RIGHT_TOP
+        },
         streetViewControl: false,
         mapTypeControl: false,
         fullscreenControl: false

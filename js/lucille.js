@@ -90,10 +90,12 @@ class Application {
         if (app.map == null) {
             return;
         }
+        const zoodMarker = "./images/marker.svg";
         let pos = { lat: locInfo.latitude, lng: locInfo.longitude };
         // if we already have a marker for the user, update it. otherwise, build one.
         if (app.marker == null) {
             app.marker = new google.maps.Marker({
+                icon: zoodMarker,
                 position: pos,
                 map: app.map,
                 title: app.username
@@ -183,6 +185,9 @@ function initMap() {
     app.map = new google.maps.Map(document.getElementById("map"), {
         center: { lat: lat, lng: lng },
         zoom: zoom,
+        zoomControlOptions: {
+            position: google.maps.ControlPosition.RIGHT_TOP
+        },
         streetViewControl: false,
         mapTypeControl: false,
         fullscreenControl: false

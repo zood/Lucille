@@ -9,7 +9,7 @@ class Application {
 	private lastLocation: LocationInfo | null;
 
 	map: google.maps.Map | null;
-	marker: google.maps.Marker | null;
+	marker: google.maps.marker.AdvancedMarkerElement | null;
 
 	constructor() {
 		this.lastLocation = null;
@@ -103,7 +103,8 @@ class Application {
 		let pos = { lat: locInfo.latitude, lng: locInfo.longitude };
 		// if we already have a marker for the user, update it. otherwise, build one.
 		if (app.marker == null) {
-			app.marker = new google.maps.Marker({
+			const { AdvancedMarkerElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
+			app.marker = new AdvancedMarkerElement({
 				position: pos,
 				map: app.map,
 				title: app.username
@@ -114,7 +115,7 @@ class Application {
 			};
 			app.map.setOptions(mapOpts);
 		} else {
-			app.marker.setOptions({ position: pos });
+			app.marker.position = pos
 		}
 
 		// set the battery level
@@ -212,7 +213,7 @@ function extractDataFromFragment(): boolean {
 }
 
 // Gets called by the GMaps SDK once it's done loading
-function initMap() {
+async function initMap() {
 	let lat = 0;
 	let lng = 0;
 	let zoom = 2;
@@ -224,7 +225,8 @@ function initMap() {
 		lng = loc.longitude;
 		zoom = 15;
 	}
-	app.map = new google.maps.Map(document.getElementById("map"), {
+	app.map = new google.maps.Map(document.getElementById("map") as HTMLElement, {
+		mapId: "228e01a5c979875f",
 		center: { lat: lat, lng: lng },
 		zoom: zoom,
 		streetViewControl: false,

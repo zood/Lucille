@@ -69,15 +69,15 @@ class Application {
         }
         let transportationMode = document.getElementById("transportation-mode");
         switch (locInfo.movement) {
-            case "bicycle" /* Bicycle */:
+            case "bicycle" /* zood.MovementType.Bicycle */:
                 transportationMode.src = "../images/activities/bike.svg";
                 break;
-            case "on_foot" /* OnFoot */:
-            case "running" /* Running */:
-            case "walking" /* Walking */:
+            case "on_foot" /* zood.MovementType.OnFoot */:
+            case "running" /* zood.MovementType.Running */:
+            case "walking" /* zood.MovementType.Walking */:
                 transportationMode.src = "../images/activities/walk.svg";
                 break;
-            case "vehicle" /* Vehicle */:
+            case "vehicle" /* zood.MovementType.Vehicle */:
                 transportationMode.src = "../images/activities/car.svg";
                 break;
             case null:
@@ -93,7 +93,8 @@ class Application {
         let pos = { lat: locInfo.latitude, lng: locInfo.longitude };
         // if we already have a marker for the user, update it. otherwise, build one.
         if (app.marker == null) {
-            app.marker = new google.maps.Marker({
+            const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+            app.marker = new AdvancedMarkerElement({
                 position: pos,
                 map: app.map,
                 title: app.username
@@ -105,7 +106,7 @@ class Application {
             app.map.setOptions(mapOpts);
         }
         else {
-            app.marker.setOptions({ position: pos });
+            app.marker.position = pos;
         }
         // set the battery level
         let batteryIcon = document.getElementById("battery-icon");
@@ -168,7 +169,7 @@ function extractDataFromFragment() {
     return true;
 }
 // Gets called by the GMaps SDK once it's done loading
-function initMap() {
+async function initMap() {
     let lat = 0;
     let lng = 0;
     let zoom = 2;
@@ -181,6 +182,7 @@ function initMap() {
         zoom = 15;
     }
     app.map = new google.maps.Map(document.getElementById("map"), {
+        mapId: "228e01a5c979875f",
         center: { lat: lat, lng: lng },
         zoom: zoom,
         streetViewControl: false,
@@ -198,8 +200,8 @@ async function onPackageReceived(pkg) {
     let msgStr = String.fromCharCode.apply(this, pkg.bytes);
     let msgObj = JSON.parse(msgStr);
     let encData = {
-        cipher_text: sodium.from_base64(msgObj.cipher_text, 1 /* ORIGINAL */),
-        nonce: sodium.from_base64(msgObj.nonce, 1 /* ORIGINAL */)
+        cipher_text: sodium.from_base64(msgObj.cipher_text, 1 /* sodium.base64_variants.ORIGINAL */),
+        nonce: sodium.from_base64(msgObj.nonce, 1 /* sodium.base64_variants.ORIGINAL */)
     };
     let unencData = sodium.crypto_box_open_easy(encData.cipher_text, encData.nonce, app.senderPublicKey, app.secretKey);
     let locInfoStr = String.fromCharCode.apply(this, unencData);
@@ -241,7 +243,7 @@ async function run() {
     try {
         let socket = new zood.DropBoxWatcher();
         socket.onPackageReceived = onPackageReceived;
-        await socket.connect("wss://api.zood.xyz" /* production */);
+        await socket.connect("wss://api.zood.xyz" /* zood.DropBoxServer.production */);
         console.log("drop box watcher is connected");
         socket.watch(app.receivingBoxId);
     }

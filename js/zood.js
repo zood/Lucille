@@ -11,12 +11,12 @@ var zood;
     zood.SymmetricKeyLength = sodium.crypto_secretbox_KEYBYTES;
     function errorCodeFromNumber(n) {
         if (n == null) {
-            return -1 /* unknown */;
+            return -1 /* ErrorCode.unknown */;
         }
         if (n <= 23 && n >= 0) {
             return n;
         }
-        return -1 /* unknown */;
+        return -1 /* ErrorCode.unknown */;
     }
     function getHashAlgId(algName) {
         if (algName == "argon2i13") {
@@ -85,18 +85,18 @@ var zood;
             return null;
         }
         switch (str) {
-            case "avatar_request" /* AvatarRequest */:
-            case "avatar_update" /* AvatarUpdate */:
-            case "browse_devices" /* BrowseDevices */:
-            case "debug" /* Debug */:
-            case "device_info" /* DeviceInfo */:
-            case "location_info" /* LocationInfo */:
-            case "location_sharing_grant" /* LocationSharingGrant */:
-            case "location_sharing_revocation" /* LocationSharingRevocation */:
-            case "location_update_request" /* LocationUpdateRequest */:
-            case "location_update_request_received" /* LocationUpdateRequestReceived */:
-            case "scream" /* Scream */:
-            case "scream_began" /* ScreamBegan */:
+            case "avatar_request" /* CommType.AvatarRequest */:
+            case "avatar_update" /* CommType.AvatarUpdate */:
+            case "browse_devices" /* CommType.BrowseDevices */:
+            case "debug" /* CommType.Debug */:
+            case "device_info" /* CommType.DeviceInfo */:
+            case "location_info" /* CommType.LocationInfo */:
+            case "location_sharing_grant" /* CommType.LocationSharingGrant */:
+            case "location_sharing_revocation" /* CommType.LocationSharingRevocation */:
+            case "location_update_request" /* CommType.LocationUpdateRequest */:
+            case "location_update_request_received" /* CommType.LocationUpdateRequestReceived */:
+            case "scream" /* CommType.Scream */:
+            case "scream_began" /* CommType.ScreamBegan */:
                 return str;
             default:
                 return null;
@@ -122,7 +122,7 @@ var zood;
         }
         toJsonObject() {
             return {
-                "id": sodium.to_base64(this.id, 1 /* ORIGINAL */),
+                "id": sodium.to_base64(this.id, 1 /* sodium.base64_variants.ORIGINAL */),
                 "manufacturer": this.manufacturer,
                 "model": this.model,
                 "os": this.os,
@@ -138,18 +138,18 @@ var zood;
         }
         toJsonObject() {
             return {
-                "cipher_text": sodium.to_base64(this.cipherText, 1 /* ORIGINAL */),
-                "nonce": sodium.to_base64(this.nonce, 1 /* ORIGINAL */)
+                "cipher_text": sodium.to_base64(this.cipherText, 1 /* sodium.base64_variants.ORIGINAL */),
+                "nonce": sodium.to_base64(this.nonce, 1 /* sodium.base64_variants.ORIGINAL */)
             };
         }
         print() {
-            console.log("{", "cipherText", sodium.to_base64(this.cipherText, 1 /* ORIGINAL */), "nonce", sodium.to_base64(this.nonce, 1 /* ORIGINAL */));
+            console.log("{", "cipherText", sodium.to_base64(this.cipherText, 1 /* sodium.base64_variants.ORIGINAL */), "nonce", sodium.to_base64(this.nonce, 1 /* sodium.base64_variants.ORIGINAL */));
         }
     }
     zood.EncryptedData = EncryptedData;
     class Error {
         constructor() {
-            this.code = -1 /* unknown */;
+            this.code = -1 /* ErrorCode.unknown */;
             this.message = "";
         }
         static fromRequest(req) {
@@ -172,13 +172,13 @@ var zood;
         }
         static networkError() {
             let err = new Error();
-            err.code = -2 /* network */;
+            err.code = -2 /* ErrorCode.network */;
             err.message = "Network error";
             return err;
         }
         static unknownError() {
             let err = new Error();
-            err.code = -1 /* unknown */;
+            err.code = -1 /* ErrorCode.unknown */;
             err.message = "<empty>";
             return err;
         }
@@ -308,7 +308,7 @@ var zood;
             return null;
         }
         try {
-            let bytes = sodium.from_base64(b64, 1 /* ORIGINAL */);
+            let bytes = sodium.from_base64(b64, 1 /* sodium.base64_variants.ORIGINAL */);
             if (bytes.length == 0) {
                 return null;
             }
@@ -350,9 +350,9 @@ var zood;
             return str;
         }
         switch (str) {
-            case "too_soon" /* TooSoon */:
-            case "starting" /* Starting */:
-            case "finished" /* Finished */:
+            case "too_soon" /* UpdateRequestActionResponse.TooSoon */:
+            case "starting" /* UpdateRequestActionResponse.Starting */:
+            case "finished" /* UpdateRequestActionResponse.Finished */:
                 return str;
             default:
                 return null;
@@ -360,7 +360,7 @@ var zood;
     }
     class UserComm {
         constructor() {
-            this.commType = "unknown" /* Unknown */;
+            this.commType = "unknown" /* CommType.Unknown */;
             this.dropBox = null;
             this.avatar = null;
             this.latitude = null;
@@ -382,26 +382,26 @@ var zood;
                 return false;
             }
             switch (this.commType) {
-                case "avatar_request" /* AvatarRequest */:
+                case "avatar_request" /* CommType.AvatarRequest */:
                     return true;
-                case "avatar_update" /* AvatarUpdate */:
+                case "avatar_update" /* CommType.AvatarUpdate */:
                     if (this.avatar == null) {
                         return false;
                     }
                     return true;
-                case "browse_devices" /* BrowseDevices */:
+                case "browse_devices" /* CommType.BrowseDevices */:
                     return false;
-                case "debug" /* Debug */:
+                case "debug" /* CommType.Debug */:
                     if (this.debugData == null) {
                         return false;
                     }
                     return true;
-                case "device_info" /* DeviceInfo */:
+                case "device_info" /* CommType.DeviceInfo */:
                     if (this.deviceInfo == null) {
                         return false;
                     }
                     return true;
-                case "location_info" /* LocationInfo */:
+                case "location_info" /* CommType.LocationInfo */:
                     if (this.latitude == null || this.longitude == null || this.time == null) {
                         return false;
                     }
@@ -420,23 +420,23 @@ var zood;
                         }
                     }
                     return true;
-                case "location_sharing_grant" /* LocationSharingGrant */:
+                case "location_sharing_grant" /* CommType.LocationSharingGrant */:
                     if (this.dropBox == null || this.dropBox.length != zood.DROP_BOX_ID_LENGTH) {
                         return false;
                     }
                     return true;
-                case "location_sharing_revocation" /* LocationSharingRevocation */:
+                case "location_sharing_revocation" /* CommType.LocationSharingRevocation */:
                     return true;
-                case "location_update_request" /* LocationUpdateRequest */:
+                case "location_update_request" /* CommType.LocationUpdateRequest */:
                     return true;
-                case "location_update_request_received" /* LocationUpdateRequestReceived */:
+                case "location_update_request_received" /* CommType.LocationUpdateRequestReceived */:
                     if (getUpdateRequestActionResponse(this.locationUpdateRequestAction) == null) {
                         return false;
                     }
                     return true;
-                case "scream" /* Scream */:
+                case "scream" /* CommType.Scream */:
                     return true;
-                case "scream_began" /* ScreamBegan */:
+                case "scream_began" /* CommType.ScreamBegan */:
                     return true;
                 default:
                     console.log("ERROR! Unhandled CommType", this.commType);
@@ -445,7 +445,7 @@ var zood;
         }
         static newBrowseDevices() {
             let comm = new UserComm();
-            comm.commType = "browse_devices" /* BrowseDevices */;
+            comm.commType = "browse_devices" /* CommType.BrowseDevices */;
             return comm;
         }
         static fromJson(json) {
@@ -482,7 +482,7 @@ var zood;
         toJson() {
             let body = { "type": this.commType };
             if (this.dropBox != null) {
-                body["drop_box"] = sodium.to_base64(this.dropBox, 1 /* ORIGINAL */);
+                body["drop_box"] = sodium.to_base64(this.dropBox, 1 /* sodium.base64_variants.ORIGINAL */);
             }
             if (this.latitude != null) {
                 body["latitude"] = this.latitude;

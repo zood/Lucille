@@ -8,8 +8,8 @@ class Application {
 
 	private lastLocation: LocationInfo | null;
 
-	map: google.maps.Map | null;
-	marker: google.maps.marker.AdvancedMarkerElement | null;
+	map: L.Map | null;
+	marker: L.Marker | null;
 
 	constructor() {
 		this.lastLocation = null;
@@ -100,22 +100,13 @@ class Application {
 			return;
 		}
 
-		let pos = { lat: locInfo.latitude, lng: locInfo.longitude };
+		let pos = L.latLng(locInfo.latitude, locInfo.longitude)
 		// if we already have a marker for the user, update it. otherwise, build one.
 		if (app.marker == null) {
-			const { AdvancedMarkerElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
-			app.marker = new AdvancedMarkerElement({
-				position: pos,
-				map: app.map,
-				title: app.username
-			});
-			let mapOpts = {
-				zoom: 15,
-				center: pos
-			};
-			app.map.setOptions(mapOpts);
+			app.marker = L.marker(pos).addTo(app.map as L.Map).bindPopup(app.username);
+			app.map.flyTo(pos, 15);
 		} else {
-			app.marker.position = pos
+			app.marker.setLatLng(pos);
 		}
 
 		// set the battery level
@@ -212,29 +203,6 @@ function extractDataFromFragment(): boolean {
 	return true;
 }
 
-// Gets called by the GMaps SDK once it's done loading
-async function initMap() {
-	let lat = 0;
-	let lng = 0;
-	let zoom = 2;
-	// if we already have a location, center us there
-	let loc = app.getLocation();
-	if (loc != null) {
-		console.log("We already have the initial location");
-		lat = loc.latitude;
-		lng = loc.longitude;
-		zoom = 15;
-	}
-	app.map = new google.maps.Map(document.getElementById("map") as HTMLElement, {
-		mapId: "228e01a5c979875f",
-		center: { lat: lat, lng: lng },
-		zoom: zoom,
-		streetViewControl: false,
-		mapTypeControl: false,
-		fullscreenControl: false
-	});
-}
-
 async function onPackageReceived(pkg: zood.Package) {
 	// console.log("onPackageReceived:", pkg);
 	// make sure this is the box we're interested in
@@ -284,6 +252,14 @@ async function run() {
 	if (!extractDataFromFragment()) {
 		return;
 	}
+
+	// initialize the Leaflet map
+	const map = L.map('map').setView([0, 0], 2)
+	L.maplibreGL({
+		// style: 'https://tiles.openfreemap.org/styles/liberty',
+		style: 'https://www.zood.xyz/static/map-style.json',
+	}).addTo(map);
+	app.map = map;
 
 	let usernameSpans = document.getElementsByClassName("username") as HTMLCollectionOf<HTMLSpanElement>;
 	for (let i = 0; i < usernameSpans.length; i++) {

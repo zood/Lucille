@@ -311,10 +311,7 @@ header {
 
 #map {
     width: 100%;
-    position: absolute;
-    top: 0;
     height: 55vh;
-    z-index: 1;
 }
 
 .inline-svg {
@@ -325,12 +322,9 @@ header {
 }
 
 .address-box {
-    position: absolute;
-    top: -180px;
-    z-index: 10;
     background: #fff;
-    width: 40vw;
-    margin: 0 auto;
+    width: 100%;
+    margin: 0 auto 2rem;
     box-shadow: 0px 15px 50px 0 rgba(7, 29, 56, 0.15);
     padding: 1.5rem;
 }
@@ -375,8 +369,7 @@ footer h2 {
 }
 
 main {
-    height: calc(60vh + 64px);
-
+    height: auto;
 }
 
 
@@ -588,12 +581,12 @@ section.privacy-policy {
 
     }
 
-    #map {
-        position: static;
+    .address-box {
+        width: 40vw;
     }
 
     footer {
-        margin-top: 150px;
+        margin-top: 0;
     }
 
     footer .desc {

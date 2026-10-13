@@ -102,13 +102,19 @@ class Application {
         // set the battery level
         let batteryIcon = document.getElementById("battery-icon");
         batteryIcon.className = this.getBatteryClassName(locInfo.battery_level);
+        let addressElem = document.getElementById("address");
         try {
-            let rg = await locationiq.getReverseGeocoding(locInfo.latitude, locInfo.longitude);
-            let addressElem = document.getElementById("address");
-            addressElem.innerText = rg.getAddress();
+            let rg = await nominatim.getReverseGeocoding(locInfo.latitude, locInfo.longitude);
+            // a newer location may have arrived while we were waiting
+            if (app.lastLocation === locInfo) {
+                addressElem.innerText = rg.getAddress();
+            }
         }
         catch (err) {
             console.log("failed to update address:", err);
+            if (app.lastLocation === locInfo) {
+                addressElem.innerText = `${locInfo.latitude.toFixed(5)}, ${locInfo.longitude.toFixed(5)}`;
+            }
         }
     }
     updateTimeAgo() {
@@ -196,6 +202,7 @@ async function run() {
     L.maplibreGL({
         // style: 'https://tiles.openfreemap.org/styles/liberty',
         style: 'https://www.zood.xyz/static/map-style.json',
+        attribution: '<a href="https://openfreemap.org" target="_blank">OpenFreeMap</a> <a href="https://www.openmaptiles.org/" target="_blank">&copy; OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
     }).addTo(map);
     app.map = map;
     let usernameSpans = document.getElementsByClassName("username");

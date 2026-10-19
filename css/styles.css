@@ -283,8 +283,43 @@ svg:not([fill]) {
  * MAIN CSS
 */
 
+/* The page colors. The dark values come from the Android app's dark theme, which is tinted with
+   Zood's navy. */
 :root {
     font-size: 14px;
+    --background: #fff;
+    --surface: #fff;
+    --text-primary: #000;
+    --text-heading: #333;
+    --text-body: #666;
+    --text-secondary: #999;
+    --raised-shadow: 0px 15px 50px 0 rgba(7, 29, 56, 0.15);
+    --privacy-background: #333;
+    --privacy-text: #999;
+    --copyright-background: #222;
+    --copyright-text: #666;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background: #14161f;
+        --surface: #1f2230;
+        --text-primary: #fff;
+        --text-heading: #e1e3ea;
+        --text-body: #a9aebd;
+        --text-secondary: #7e8496;
+        /* Shadows don't show on a dark page, so raised boxes get an outline instead */
+        --raised-shadow: 0 0 0 1px #5f6578;
+        --privacy-background: #1f2230;
+        --privacy-text: #a9aebd;
+        --copyright-background: #181b25;
+        --copyright-text: #7e8496;
+    }
+}
+
+body {
+    background: var(--background);
+    color: var(--text-primary);
 }
 
 main,
@@ -299,14 +334,17 @@ main,
 }
 
 header {
+    /* Phones don't show the header, so the map can fill more of the screen. Wider screens show
+       it (see the min-width media query at the end). */
+    display: none;
     position: absolute;
     top: 0;
     left: 0;
-    background: #fff;
+    background: var(--surface);
     padding: 2rem;
     z-index: 10;
     border-bottom-right-radius: 2rem;
-    box-shadow: 0px 15px 50px 0 rgba(7, 29, 56, 0.15);
+    box-shadow: var(--raised-shadow);
 }
 
 #map {
@@ -322,15 +360,15 @@ header {
 }
 
 .address-box {
-    background: #fff;
+    background: var(--surface);
     width: 100%;
     margin: 0 auto 2rem;
-    box-shadow: 0px 15px 50px 0 rgba(7, 29, 56, 0.15);
+    box-shadow: var(--raised-shadow);
     padding: 1.5rem;
 }
 
 .address-box .subheading .time {
-    color: #999999;
+    color: var(--text-secondary);
     font-weight: 400;
     font-family: Roboto;
     font-size: 1rem;
@@ -340,7 +378,7 @@ header {
 
 .address-box p {
     font-family: Roboto;
-    color: #666666;
+    color: var(--text-body);
     margin-top: .25rem;
     font-size: 1rem;
     line-height: 1.67;
@@ -351,7 +389,7 @@ footer .desc {
     font-size: 1rem;
     line-height: 1.36;
     text-align: left;
-    color: #666666;
+    color: var(--text-body);
     margin-bottom: 2.5rem;
 }
 
@@ -365,7 +403,7 @@ footer h2 {
     line-height: normal;
     letter-spacing: normal;
     text-align: center;
-    color: #333333;
+    color: var(--text-heading);
 }
 
 main {
@@ -391,7 +429,7 @@ footer {
 h1 {
     font-family: Montserrat;
     font-size: 30px;
-    color: #333;
+    color: var(--text-heading);
     letter-spacing: -0.6px;
     text-align: center;
     margin-bottom: 2rem;
@@ -509,7 +547,7 @@ h1 {
 section.privacy-policy {
     padding: 3.75rem 0;
     margin-top: 6rem;
-    background-color: #333333;
+    background-color: var(--privacy-background);
     width: 100%;
     max-width: 100%;
 }
@@ -526,7 +564,7 @@ section.privacy-policy {
     font-size: 0.9375rem;
     line-height: 1.67;
     text-align: left;
-    color: #999999;
+    color: var(--privacy-text);
 }
 
 .container {
@@ -541,7 +579,7 @@ section.privacy-policy {
 }
 
 .copyright {
-    background-color: #222222;
+    background-color: var(--copyright-background);
     font-family: Lato, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
     font-size: 0.875rem;
     line-height: 1.67;
@@ -549,7 +587,7 @@ section.privacy-policy {
     width: 100%;
     letter-spacing: normal;
     text-align: left;
-    color: #666666;
+    color: var(--copyright-text);
 }
 
 .container {
@@ -604,6 +642,58 @@ section.privacy-policy {
 
         line-height: 1.56;
 
-        color: #666666;
+        color: var(--text-body);
+    }
+}
+
+/* Leaflet's map controls and popup in dark mode. Light mode keeps Leaflet's own colors. */
+@media (prefers-color-scheme: dark) {
+    .leaflet-container {
+        /* The land color of map-style-dark.json, shown until the map is drawn */
+        background: #181b25;
+    }
+
+    .leaflet-container a {
+        color: #5cd1ff;
+    }
+
+    .leaflet-bar a {
+        background-color: #1f2230;
+        border-bottom-color: #4a5063;
+        color: #fff;
+    }
+
+    .leaflet-bar a:hover,
+    .leaflet-bar a:focus {
+        background-color: #282c3d;
+    }
+
+    .leaflet-bar a.leaflet-disabled {
+        background-color: #1f2230;
+        color: #7e8496;
+    }
+
+    .leaflet-touch .leaflet-bar {
+        border-color: #5f6578;
+    }
+
+    .leaflet-container .leaflet-control-attribution {
+        background: rgba(31, 34, 48, 0.8);
+        color: #a9aebd;
+    }
+
+    .leaflet-popup-content-wrapper,
+    .leaflet-popup-tip {
+        background: #1f2230;
+        color: #e1e3ea;
+    }
+
+    .leaflet-container a.leaflet-popup-close-button {
+        color: #a9aebd;
+    }
+
+    .leaflet-container a.leaflet-popup-close-button:hover,
+    .leaflet-container a.leaflet-popup-close-button:focus {
+        color: #fff;
     }
 }

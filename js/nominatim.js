@@ -1,3 +1,4 @@
+"use strict";
 var nominatim;
 (function (nominatim) {
     // Usage policy: https://operations.osmfoundation.org/policies/nominatim/

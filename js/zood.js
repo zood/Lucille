@@ -1,3 +1,4 @@
+"use strict";
 var zood;
 (function (zood) {
     zood.DROP_BOX_ID_LENGTH = 16;

@@ -1,5 +1,7 @@
+"use strict";
 class Application {
     constructor() {
+        this.updateTimer = null;
         this.lastLocation = null;
         this.map = null;
         this.marker = null;
@@ -58,7 +60,7 @@ class Application {
         if (this.updateTimer != null) {
             clearInterval(this.updateTimer);
         }
-        setInterval(this.updateTimeAgo, 60 * 1000);
+        this.updateTimer = setInterval(this.updateTimeAgo, 60 * 1000);
         let compass = document.getElementById("compass");
         if (locInfo.bearing != null) {
             compass.style.display = "inline-block";
@@ -129,6 +131,13 @@ class Application {
     }
 }
 const app = new Application();
+const lightMapStyle = "https://www.zood.xyz/static/map-style.json";
+const darkMapStyle = "https://www.zood.xyz/static/map-style-dark.json";
+// Matches while the viewer's system is in dark mode
+const darkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+function mapStyle() {
+    return darkScheme.matches ? darkMapStyle : lightMapStyle;
+}
 function extractDataFromFragment() {
     if (!window.document.location.hash) {
         return false;
@@ -199,12 +208,19 @@ async function run() {
     }
     // initialize the Leaflet map
     const map = L.map('map').setView([0, 0], 2);
-    L.maplibreGL({
+    const glLayer = L.maplibreGL({
         // style: 'https://tiles.openfreemap.org/styles/liberty',
-        style: 'https://www.zood.xyz/static/map-style.json',
-        attribution: '<a href="https://openfreemap.org" target="_blank">OpenFreeMap</a> <a href="https://www.openmaptiles.org/" target="_blank">&copy; OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
+        style: mapStyle(),
+        // The plugin shows this instead of the attributions in the style, which has none
+        attributionControl: {
+            customAttribution: '<a href="https://openfreemap.org" target="_blank">OpenFreeMap</a> <a href="https://www.openmaptiles.org/" target="_blank">&copy; OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
+        },
     }).addTo(map);
     app.map = map;
+    // switch the map along with the system's light or dark mode
+    darkScheme.addEventListener("change", () => {
+        glLayer.getMaplibreMap().setStyle(mapStyle());
+    });
     let usernameSpans = document.getElementsByClassName("username");
     for (let i = 0; i < usernameSpans.length; i++) {
         let span = usernameSpans.item(i);

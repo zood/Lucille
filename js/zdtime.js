@@ -1,3 +1,4 @@
+"use strict";
 var zdtime;
 (function (zdtime) {
     function relativeTime(nowMs, thenMs, locale) {

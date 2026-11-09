@@ -239,15 +239,59 @@ async function run() {
         console.log("error retrieving public key: ", err);
         return;
     }
-    try {
-        let socket = new zood.DropBoxWatcher();
-        socket.onPackageReceived = onPackageReceived;
-        await socket.connect("wss://api.zood.xyz" /* zood.DropBoxServer.production */);
+    watchDropBox();
+}
+const RECONNECT_MIN_DELAY_MS = 1000;
+const RECONNECT_MAX_DELAY_MS = 60 * 1000;
+// A connection that stays up at least this long resets the reconnect backoff
+const STABLE_CONNECTION_MS = 60 * 1000;
+// Watches the receiving drop box, reconnecting whenever the socket to oscar fails or drops. oscar
+// sends the box's current package as soon as it's watched, so a reconnect also catches up on any
+// location update that arrived while we were disconnected.
+function watchDropBox() {
+    let delay = RECONNECT_MIN_DELAY_MS;
+    let retryTimer = null;
+    const scheduleReconnect = () => {
+        if (retryTimer != null) {
+            return;
+        }
+        // jitter, so viewers don't all reconnect at the same instant after an oscar restart
+        let wait = delay / 2 + Math.random() * delay / 2;
+        console.log(`reconnecting drop box watcher in ${Math.round(wait)}ms`);
+        retryTimer = window.setTimeout(connect, wait);
+        delay = Math.min(delay * 2, RECONNECT_MAX_DELAY_MS);
+    };
+    const connect = async () => {
+        retryTimer = null;
+        let watcher = new zood.DropBoxWatcher();
+        watcher.onPackageReceived = onPackageReceived;
+        let connectedAt = 0;
+        watcher.onDisconnect = () => {
+            console.log("drop box watcher disconnected");
+            if (Date.now() - connectedAt >= STABLE_CONNECTION_MS) {
+                delay = RECONNECT_MIN_DELAY_MS;
+            }
+            scheduleReconnect();
+        };
+        try {
+            await watcher.connect("wss://api.zood.xyz" /* zood.DropBoxServer.production */);
+        }
+        catch (err) {
+            console.log("error connecting drop box watcher", err);
+            scheduleReconnect();
+            return;
+        }
+        connectedAt = Date.now();
         console.log("drop box watcher is connected");
-        socket.watch(app.receivingBoxId);
-    }
-    catch (err) {
-        console.log("error connecting drop box watcher", err);
-        return;
-    }
+        watcher.watch(app.receivingBoxId);
+    };
+    // when the network comes back, don't sit out the rest of the backoff
+    window.addEventListener("online", () => {
+        if (retryTimer != null) {
+            clearTimeout(retryTimer);
+            delay = RECONNECT_MIN_DELAY_MS;
+            connect();
+        }
+    });
+    connect();
 }
